@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard | TerusanMinimarket</title>
+  <link rel="stylesheet" type="text/css" href="{% static '/global.css' %}">
+</head>
+<body>
+
+<header>
+  <h1>🛒 Terusan Minimarket</h1>
+  <div class="header-right">
+    <div class="search-bar">
+      <input id="searchInput" placeholder="Cari di Terusan Minimarket" type="text" />
+      <button>🔍</button>
+    </div>
+
+    <div class="header-icons">
+      <a href="{% url 'home' %}" title="Home">
+
+        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946433.png" alt="Home Icon" />
+      </a>
+      <a href="{% url 'cart' %}" title="Keranjang">
+        <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Cart Icon" />
+      </a>
+    </div>
+
+    <div id="authButtons" class="auth-buttons">
+      <button class="btn btn-outline-primary btn-sm" id="btnLogin">Masuk</button>
+      <button class="btn btn-primary btn-sm" id="btnRegister">Daftar</button>
+    </div>
+
+    <div id="accountMenu" class="account-menu" style="display: none;">
+      <div class="account-menu-trigger">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User Icon" />
+        <span id="accountUsername"></span>
+      </div>
+      <div id="accountDropdown" class="account-dropdown">
+        <a href="profile.html">Profil</a>
+        <button id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="main-flex-container">
+    <div class="sidebar">
+      <h3>Filter Kategori</h3>
+      <select id="categoryFilter">
+        </select>
+    </div>
+
+    <div class="catalog-container" id="catalog">
+      </div>
+  </div>
+
+  <section class="info-section">
+    <div class="info-grid">
+        <div class="payment-shipping-methods">
+            <div class="method-section">
+                <h3>Metode Pembayaran</h3>
+                <div class="logos payment-logos">
+                    <img src="https://via.placeholder.com/80x40/007bff/ffffff?text=BCA" alt="BCA">
+                    <img src="https://via.placeholder.com/80x40/007bff/ffffff?text=Mandiri" alt="Mandiri">
+                    <img src="https://via.placeholder.com/80x40/dc3545/ffffff?text=BRI" alt="BRI">
+                    <img src="https://via.placeholder.com/80x40/0056b3/ffffff?text=BNI" alt="BNI">
+                    <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=CIMB" alt="CIMB Niaga">
+                    <img src="https://via.placeholder.com/80x40/fd7e14/ffffff?text=Permata" alt="PermataBank">
+                    <img src="https://via.placeholder.com/80x40/6610f2/ffffff?text=Maybank" alt="Maybank">
+                    <img src="https://via.placeholder.com/80x40/20c997/ffffff?text=LinkAja" alt="LinkAja">
+                    <img src="https://via.placeholder.com/80x40/6f42c1/ffffff?text=OVO" alt="OVO">
+                    <img src="https://via.placeholder.com/80x40/28a745/ffffff?text=GOPAY" alt="GOPAY">
+                    <img src="https://via.placeholder.com/80x40/ffc107/343a40?text=ShopeePay" alt="ShopeePay">
+                    <img src="https://via.placeholder.com/80x40/17a2b8/ffffff?text=Indodana" alt="Indodana">
+                    <img src="https://via.placeholder.com/80x40/e83e8c/ffffff?text=i.Saku" alt="i.Saku">
+                    <img src="https://via.placeholder.com/80x40/663399/ffffff?text=Kredivo" alt="Kredivo">
+                    <img src="https://via.placeholder.com/80x40/343a40/ffffff?text=Akulaku" alt="Akulaku">
+                    <img src="https://via.placeholder.com/80x40/000000/ffffff?text=Visa" alt="Visa">
+                    <img src="https://via.placeholder.com/80x40/000000/ffffff?text=Mastercard" alt="Mastercard">
+                    <img src="https://via.placeholder.com/80x40/000000/ffffff?text=JCB" alt="JCB">
+                    <img src="https://via.placeholder.com/80x40/000000/ffffff?text=AMEX" alt="American Express">
+                </div>
+            </div>
+            <div class="method-section">
+                <h3>Jasa Pengiriman</h3>
+                <div class="logos shipping-logos">
+                    <img src="https://via.placeholder.com/80x40/28a745/ffffff?text=IndoPaket" alt="IndoPaket">
+                    <img src="https://via.placeholder.com/80x40/ffc107/343a40?text=SiCepat" alt="SiCepat">
+                    </div>
+            </div>
+        </div>
+        <div class="ecommerce-description">
+            <p><strong>Terusan Minimarket</strong></p>
+            <p>Alamat: Jalan Kramat Jaya no.34 Semper Barat, Cilincing, Jakarta Utara DKI Jakarta, Indonesia</p>
+            <p>Pemilik: Haris Sulaiman</p>
+            <p>Nomor Telepon: 081317599188</p>
+        </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 FAZAH | TerusanMinimarket
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<div id="productDetailModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" id="closeDetailModal">&times;</span>
+    <img id="modalProductImage" src="" alt="Product Image" style="max-width: 150px; height: auto; display: block; margin: 0 auto 20px;">
+    <h2 id="modalProductName">Nama Produk</h2>
+    <p id="modalProductDescription">Deskripsi singkat produk</p>
+    <p class="product-price">Harga: <span id="modalProductPrice"></span></p>
+    <p><strong>Stok tersedia:</strong> <span id="modalProductStock">0</span></p>
+    <button id="modalAddToCartBtn" class="btn btn-primary mt-3" style="width: 100%;">+ Keranjang</button>
+  </div>
+</div>
+
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button" id="closeAuthModal">&times;</span>
+    <div id="loginForm" class="auth-form">
+      <h2>Masuk</h2>
+      <input type="text" id="loginId" placeholder="Username / Email / No. Telepon" required>
+      <input type="password" id="loginPassword" placeholder="Kata Sandi" required>
+      <p id="loginError" class="error-message"></p>
+      <button type="submit" class="btn btn-primary" id="btnLoginSubmit">Masuk</button>
+      <button type="button" class="btn btn-link" id="showRegister">Belum punya akun? Daftar di sini</button>
+      <button type="button" class="btn btn-link" id="showForgotPassword">Lupa Kata Sandi?</button>
+    </div>
+
+    <div id="registerForm" class="auth-form">
+      <h2>Daftar</h2>
+      <input type="text" id="regUsername" placeholder="Username" required>
+      <input type="text" id="regName" placeholder="Nama Lengkap" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="tel" id="regPhone" placeholder="Nomor Telepon (cth: 081234567890)" required>
+      <input type="password" id="regPassword" placeholder="Kata Sandi" required>
+      <p id="registerError" class="error-message"></p>
+      <button type="submit" class="btn btn-primary" id="btnRegisterSubmit">Daftar</button>
+      <button type="button" class="btn btn-link" id="showLoginFromRegister">Sudah punya akun? Masuk</button>
+    </div>
+
+    <div id="forgotPasswordForm" class="auth-form">
+      <h2>Lupa Kata Sandi</h2>
+      <p>Masukkan Username / Email / No. Telepon Anda untuk reset kata sandi.</p>
+      <input type="text" id="forgotId" placeholder="Username / Email / No. Telepon" required>
+      <p id="forgotError" class="error-message"></p>
+      <button type="submit" class="btn btn-primary" id="btnResetPassword">Reset Kata Sandi</button>
+      <button type="button" class="btn btn-link" id="showLoginFromForgot">Kembali ke Login</button>
+    </div>
+  </div>
+</div>
+
+<script src="{% static '/dashboard.js' %}"></script>
+</body>
+</html>
