@@ -18,3 +18,5 @@ def order(request):
     return render(request, 'order_success.html')
 def order_history(request):
     return render(request, 'order_history.html')
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
