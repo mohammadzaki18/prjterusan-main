@@ -14,3 +14,7 @@ def checkout(request):
     return render(request, 'checkout.html')
 def profile(request):
     return render(request, 'profile.html')
+def order(request):
+    return render(request, 'order_success.html')
+def order_history(request):
+    return render(request, 'order_history.html')

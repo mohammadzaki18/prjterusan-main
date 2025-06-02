@@ -114,6 +114,18 @@ const registerError = document.getElementById('registerError');
 const forgotError = document.getElementById('forgotError');
 const toast = document.getElementById('toast');
 
+// New OTP related DOM elements
+const otpVerificationForm = document.getElementById('otpVerificationForm');
+const otpInput = document.getElementById('otpInput');
+const otpMessage = document.getElementById('otpMessage');
+const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+const showLoginFromOtpLink = document.getElementById('showLoginFromOtp');
+
+// Temporary storage for user registration/reset data during OTP flow
+let tempUserData = null;
+let currentOtp = null;
+let otpPurpose = null; // 'register' or 'reset'
+
 // Product Detail Modal DOM elements
 const productDetailModal = document.getElementById('productDetailModal');
 const closeDetailModal = document.getElementById('closeDetailModal');
@@ -128,6 +140,7 @@ const modalAddToCartBtn = document.getElementById('modalAddToCartBtn');
 const catalogContainer = document.getElementById('catalog');
 const categoryFilter = document.getElementById('categoryFilter');
 const searchInput = document.getElementById('searchInput');
+const accountDropdown = document.getElementById('accountDropdown'); // Added this as it was missing from original DOM elements but used.
 
 // --- Global Utility Functions ---
 
@@ -197,16 +210,18 @@ function updateAddToCartButtonsVisibility(isLoggedIn) {
 
 
 /**
- * Shows a specific authentication form (login, register, forgot password) in the modal.
- * @param {string} formName - 'login', 'register', or 'forgot'.
+ * Shows a specific authentication form (login, register, forgot password, otp verification) in the modal.
+ * @param {string} formName - 'login', 'register', 'forgot', or 'otp'.
  */
 window.showForm = function(formName) {
     if (loginForm) loginForm.style.display = 'none';
     if (registerForm) registerForm.style.display = 'none';
     if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
+    if (otpVerificationForm) otpVerificationForm.style.display = 'none'; // Hide OTP form
     if (loginError) loginError.textContent = '';
     if (registerError) registerError.textContent = '';
     if (forgotError) forgotError.textContent = '';
+    if (otpMessage) otpMessage.textContent = '';
 
     if (formName === 'login' && loginForm) {
         loginForm.style.display = 'block';
@@ -214,6 +229,8 @@ window.showForm = function(formName) {
         registerForm.style.display = 'block';
     } else if (formName === 'forgot' && forgotPasswordForm) {
         forgotPasswordForm.style.display = 'block';
+    } else if (formName === 'otp' && otpVerificationForm) { // Show OTP form
+        otpVerificationForm.style.display = 'block';
     }
 };
 
@@ -283,7 +300,7 @@ window.login = function() {
 };
 
 /**
- * Handles user registration.
+ * Handles user registration - now initiates OTP flow.
  */
 window.register = function() {
     const username = regUsernameInput.value.trim();
@@ -314,22 +331,18 @@ window.register = function() {
         return;
     }
 
-    const newUser = { username, name, email, phone, password, address: '' };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
+    // Store user data temporarily and send OTP
+    tempUserData = { username, name, email, phone, password, address: '' };
+    otpPurpose = 'register';
+    sendOtp(email); // Simulate sending OTP to email
 
-    window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
-    window.showForm('login');
-    // Clear registration form fields
-    regUsernameInput.value = '';
-    regNameInput.value = '';
-    regEmailInput.value = '';
-    regPhoneInput.value = '';
-    regPasswordInput.value = '';
+    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${email}. Silakan cek email Anda. (Simulasi: OTP: ${currentOtp})`;
+    window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
+    window.showForm('otp'); // Show OTP verification form
 };
 
 /**
- * Handles forgot password request.
+ * Handles forgot password request - now initiates OTP flow.
  */
 window.resetPassword = function() {
     const id = forgotIdInput.value.trim();
@@ -342,15 +355,92 @@ window.resetPassword = function() {
     const foundUser = users.find(u => u.username === id || u.email === id || u.phone === id);
 
     if (foundUser) {
-        // In a real application, you would send a reset link to their email/phone
-        window.showToast('Instruksi reset kata sandi telah dikirim.', 'info');
-        if (authModal) authModal.style.display = 'none';
+        // In a real application, you would send a reset link/OTP to their email
+        tempUserData = foundUser; // Store the found user for later password update
+        otpPurpose = 'reset';
+        sendOtp(foundUser.email); // Simulate sending OTP to user's registered email
+
+        if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${foundUser.email}. Silakan cek email Anda. (Simulasi: OTP: ${currentOtp})`;
+        window.showToast('Instruksi reset kata sandi telah dikirim. Mohon verifikasi.', 'info');
+        window.showForm('otp'); // Show OTP verification form
         forgotIdInput.value = '';
     } else {
         if (forgotError) forgotError.textContent = 'Akun tidak ditemukan.';
         window.showToast('Reset kata sandi gagal!', 'error');
     }
 };
+
+/**
+ * Simulates sending an OTP. In a real application, this would be an API call to your backend.
+ * The backend would generate a secure OTP, send it via email/SMS, and store it for verification.
+ * @param {string} destination - The email or phone number to send the OTP to.
+ */
+function sendOtp(destination) {
+    // --- SERVER-SIDE LOGIC SIMULATION ---
+    // In a real application:
+    // 1. Generate a cryptographically secure random OTP.
+    // 2. Store the OTP linked to the user/session with an expiry time.
+    // 3. Use a mail service (e.g., SendGrid, Mailgun, NodeMailer) to send the OTP to 'destination'.
+    // 4. Return a success/failure response.
+    // -------------------------------------
+
+    // For simulation: Generate a 6-digit OTP and log it.
+    currentOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
+}
+
+/**
+ * Verifies the entered OTP.
+ */
+window.verifyOtp = function() {
+    const enteredOtp = otpInput.value.trim();
+
+    if (!enteredOtp) {
+        if (otpMessage) otpMessage.textContent = 'Mohon masukkan OTP.';
+        return;
+    }
+
+    // --- SERVER-SIDE LOGIC SIMULATION ---
+    // In a real application:
+    // 1. Send the entered OTP and user identifier to the backend.
+    // 2. Backend verifies the OTP against the stored one, checking expiry.
+    // 3. If valid, backend marks the user/session as verified and proceeds.
+    // -------------------------------------
+
+    if (enteredOtp === currentOtp) {
+        if (otpPurpose === 'register') {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push(tempUserData);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
+            window.showForm('login');
+            // Clear registration form fields
+            regUsernameInput.value = '';
+            regNameInput.value = '';
+            regEmailInput.value = '';
+            regPhoneInput.value = '';
+            regPasswordInput.value = '';
+
+        } else if (otpPurpose === 'reset') {
+            // In a real app, here you would direct the user to a "set new password" page
+            // For this client-side simulation, let's just allow them to "login" if they remember it.
+            // A better simulation would be to prompt for new password after successful OTP.
+            window.showToast('Verifikasi OTP berhasil! Anda bisa login dengan kata sandi yang ada atau coba reset lagi.', 'success');
+            window.showForm('login'); // Go back to login
+        }
+        // Clear OTP related temporary data
+        tempUserData = null;
+        currentOtp = null;
+        otpPurpose = null;
+        otpInput.value = '';
+        if (authModal) authModal.style.display = 'none'; // Close modal after successful verification
+    } else {
+        if (otpMessage) otpMessage.textContent = 'OTP salah. Mohon coba lagi.';
+        window.showToast('Verifikasi OTP gagal!', 'error');
+    }
+};
+
 
 // --- Product Catalog and Detail Functions ---
 
@@ -528,12 +618,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (showLoginFromRegisterLink) showLoginFromRegisterLink.addEventListener('click', () => window.showForm('login'));
     if (showForgotPasswordLink) showForgotPasswordLink.addEventListener('click', () => window.showForm('forgot'));
     if (showLoginFromForgotLink) showLoginFromForgotLink.addEventListener('click', () => window.showForm('login'));
+    if (showLoginFromOtpLink) showLoginFromOtpLink.addEventListener('click', () => window.showForm('login')); // New: from OTP to login
 
     // Auth form submissions
     if (btnLoginSubmit) btnLoginSubmit.addEventListener('click', window.login);
     if (btnRegisterSubmit) btnRegisterSubmit.addEventListener('click', window.register);
     if (btnResetPassword) btnResetPassword.addEventListener('click', window.resetPassword);
-
+    if (btnVerifyOtp) btnVerifyOtp.addEventListener('click', window.verifyOtp); // New: OTP verification
 
     // --- Dashboard Specific Logic ---
 

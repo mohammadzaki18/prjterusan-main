@@ -7,6 +7,8 @@ from . import views
 urlpatterns = [
     path('', views.dashboard, name='home'),
     path('checkout/', views.checkout, name='checkout'),
-    path('cart/', views.cart, name='cart'), # Tambahkan path ini
+    path('order_success/', views.order, name='order'),
+    path('cart/', views.cart, name='cart'),
     path('profile/', views.profile, name='profile'),
+    path('order_history/', views.order_history, name='history'),
 ]

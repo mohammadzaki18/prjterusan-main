@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             window.showToast('Anda belum login. Silakan login.', 'error');
             // Optionally redirect to dashboard or login page
-            // window.location.href = 'dashboard.html';
+            // window.location.href = '/'; // Ini sudah benar mengarah ke root
         }
     }
 
@@ -41,38 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update in the 'users' array in localStorage
                 let users = JSON.parse(localStorage.getItem('users')) || [];
-                const userIndex = users.findIndex(u => u.username === currentUser.username); // Assuming username is unique
-
-                if (userIndex !== -1) {
+                const userIndex = users.findIndex(u => u.username === currentUser.username);
+                if (userIndex > -1) {
                     users[userIndex] = currentUser;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    // Also update the activeUser in localStorage if anything in currentUser changed
+                    // (though for profile, username typically doesn't change, but it's good practice)
+                    localStorage.setItem('activeUser', currentUser.username); // Re-set active user if username changed
+                    window.showToast('Profil berhasil diperbarui!', 'success');
+                    window.updateAuthUI(); // Update UI in case name changed
                 } else {
-                    // This case should ideally not happen if a user is logged in and editing their profile
-                    // but as a fallback, add if not found
-                    users.push(currentUser);
+                    window.showToast('Gagal menemukan profil pengguna untuk diperbarui.', 'error');
                 }
-                localStorage.setItem('users', JSON.stringify(users));
-
-                // Update the 'currentUser' item in localStorage as well
-                window.saveUserToLocalStorage(currentUser);
-
-                window.showToast('Profil berhasil diperbarui!', 'success');
-                window.updateAuthUI(); // Update username in header in case it was changed
             } else {
-                window.showToast('Tidak dapat menyimpan profil. Anda belum login.', 'error');
+                window.showToast('Anda harus login untuk memperbarui profil.', 'error');
             }
         });
     }
 
-    // --- Event Listeners and Initializations for shared header/auth ---
+    // --- Inisialisasi untuk halaman profil ---
+    loadProfileData(); // Muat data profil saat halaman dimuat
 
-    // Initial load of user data and update UI for header
+    // Initial load of user data and update UI for header (delegated to dashboard.js functions)
     window.updateAuthUI();
 
-    // Event listeners for header auth buttons (delegated to dashboard.js functions)
-    const btnLoginHeader = document.getElementById('btnLogin');
-    const btnRegisterHeader = document.getElementById('btnRegister');
-    if (btnLoginHeader) btnLoginHeader.addEventListener('click', window.showLoginModal);
-    if (btnRegisterHeader) btnRegisterHeader.addEventListener('click', window.showRegisterModal);
+    // Event listeners for header auth buttons (Copied from dashboard.js for header on all pages)
+    document.getElementById('btnLogin')?.addEventListener('click', window.showLoginModal);
+    document.getElementById('btnRegister')?.addEventListener('click', window.showRegisterModal);
 
     // Event listener for account menu dropdown
     const accountMenu = document.getElementById('accountMenu');
@@ -90,49 +85,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Logout button
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
+    document.getElementById('logoutBtn')?.addEventListener('click', window.logout);
 
     // Close auth modal
-    const closeAuthModal = document.getElementById('closeAuthModal');
-    if (closeAuthModal) {
-        closeAuthModal.addEventListener('click', () => {
-            const authModal = document.getElementById('authModal');
-            if (authModal) authModal.style.display = 'none';
-        });
-    }
+    document.getElementById('closeAuthModal')?.addEventListener('click', () => {
+        document.getElementById('authModal').style.display = 'none';
+    });
 
-    // Auth form navigation
-    const showRegisterLink = document.getElementById('showRegister');
-    const showLoginFromRegisterLink = document.getElementById('showLoginFromRegister');
-    const showForgotPasswordLink = document.getElementById('showForgotPassword');
-    const showLoginFromForgotLink = document.getElementById('showLoginFromForgot');
-    if (showRegisterLink) showRegisterLink.addEventListener('click', () => window.showForm('register'));
-    if (showLoginFromRegisterLink) showLoginFromRegisterLink.addEventListener('click', () => window.showForm('login'));
-    if (showForgotPasswordLink) showForgotPasswordLink.addEventListener('click', () => window.showForm('forgot'));
-    if (showLoginFromForgotLink) showLoginFromForgotLink.addEventListener('click', () => window.showForm('login'));
+    // Auth form navigation links
+    document.getElementById('showRegister')?.addEventListener('click', () => window.showForm('register'));
+    document.getElementById('showLoginFromRegister')?.addEventListener('click', () => window.showForm('login'));
+    document.getElementById('showForgotPassword')?.addEventListener('click', () => window.showForm('forgot'));
+    document.getElementById('showLoginFromForgot')?.addEventListener('click', () => window.showForm('login'));
 
     // Auth form submissions
-    const btnLoginSubmit = document.getElementById('btnLoginSubmit');
-    const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
-    const btnResetPassword = document.getElementById('btnResetPassword');
-    if (btnLoginSubmit) btnLoginSubmit.addEventListener('click', window.login);
-    if (btnRegisterSubmit) btnRegisterSubmit.addEventListener('click', window.register);
-    if (btnResetPassword) btnResetPassword.addEventListener('click', window.resetPassword);
+    document.getElementById('btnLoginSubmit')?.addEventListener('click', window.login);
+    document.getElementById('btnRegisterSubmit')?.addEventListener('click', window.register);
+    document.getElementById('btnResetPassword')?.addEventListener('click', window.resetPassword);
 
     // Search functionality in header (re-enable for other pages if needed)
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        // Implement search on other pages if desired,
-        // typically this would redirect to dashboard with a search query.
         searchInput.addEventListener('keyup', function(e) {
             if (e.key === 'Enter' && searchInput.value.trim() !== '') {
-                // Redirect to dashboard with search term
-                window.location.href = `dashboard.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+                // Redirect to dashboard (root URL) with search term
+                window.location.href = `/?search=${encodeURIComponent(searchInput.value.trim())}`; // <-- BARIS YANG DIPERBAIKI!
             }
         });
     }
-
-    // Initial load of profile data when the page loads
-    loadProfileData();
 });

@@ -10,7 +10,7 @@ body {
   background: #f8f9fa; /* Light gray background */
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Ini penting untuk sticky footer */
   color: #212529; /* Darker text for readability */
   line-height: 1.6;
 }
@@ -192,11 +192,17 @@ header .header-right {
 
 /* === Main Content Layout === */
 main {
-  flex: 1;
+  flex: 1; /* Ini penting agar main mengambil semua ruang yang tersisa */
   padding: 30px 40px; /* Adjusted padding for main content */
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  /* Menambahkan min-height untuk memastikan main selalu cukup tinggi */
+  /* Hitungan: 100vh (tinggi viewport) - tinggi header - tinggi footer */
+  /* Ini adalah estimasi, sesuaikan jika tinggi header/footer berubah */
+  min-height: calc(100vh - 150px); /* Contoh: 150px untuk header + footer */
+  /* Anda bisa menambahkan padding-bottom lebih besar untuk jarak ekstra */
+  padding-bottom: 50px; /* Tambahan jarak di bawah konten */
 }
 
 .main-flex-container {
@@ -756,12 +762,13 @@ main {
 
 /* --- Footer --- */
 footer {
-  background: #343a40;
-  color: #f8f9fa;
-  text-align: center;
-  padding: 20px;
-  font-size: 15px;
-  margin-top: auto; /* Push footer to bottom */
+  /* Hapus margin-top: auto; di sini jika body sudah flex-direction: column */
+  /* background: #343a40; */
+  /* color: #f8f9fa; */
+  /* text-align: center; */
+  /* padding: 20px; */
+  /* font-size: 15px; */
+  margin-top: auto; /* Pastikan footer selalu di bawah */
 }
 
 
@@ -915,9 +922,6 @@ footer {
         width: 40%; /* Allocate space for methods */
         justify-content: space-between;
     }
-    .method-section {
-        flex: 1; /* Allow each method section to take equal space */
-    }
     .ecommerce-description {
         width: 55%; /* Allocate space for description */
     }
@@ -1068,11 +1072,353 @@ footer {
     border-top: 2px solid #28a745;
 }
 
-.btn-block {
-    display: block;
-    width: 100%;
-    margin-top: 25px;
-    padding: 15px;
+/* Styles specific to order success page */
+.success-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  max-width: 700px;
+  margin: 50px auto;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 25px;
+}
+
+.success-container h2 {
+  color: #28a745; /* Success green */
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.success-container p {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 25px;
+  line-height: 1.8;
+}
+
+.order-details-summary {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.order-details-summary h3 {
+  font-size: 22px;
+  color: #343a40;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+}
+
+.order-details-summary div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.order-details-summary div span:first-child {
+  color: #6c757d;
+}
+
+.order-details-summary div span:last-child {
+  font-weight: 500;
+  color: #343a40;
+}
+
+.order-details-summary .total-price {
+  font-weight: bold;
+  color: #28a745;
+  font-size: 20px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #dee2e6;
+}
+
+.action-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* Adjust main padding for this specific page if needed */
+body > main {
+    padding: 20px; /* Slightly less padding for full-width appeal */
+}
+
+/* Footer specific styles */
+.info-section {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    padding: 30px;
+    margin-top: 40px; /* Space from catalog */
+    display: flex;
+    flex-direction: column; /* Default to column for small screens */
+    gap: 30px;
+}
+
+.info-grid {
+    display: flex;
+    flex-direction: column; /* Default to column */
+    gap: 30px;
+}
+
+.payment-shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    flex-wrap: wrap; /* Allows sections to wrap if not enough space */
+}
+
+.method-section h3 {
     font-size: 18px;
-    border-radius: 8px;
+    color: #343a40;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Spacing between logos */
+    justify-content: flex-start; /* Align logos to start */
+}
+
+.logos img {
+    height: 35px; /* Standard height for logos */
+    width: auto; /* Maintain aspect ratio */
+    max-width: 100px; /* Max width for larger logos */
+    object-fit: contain;
+    border: 1px solid #eee; /* Light border around logos */
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #fcfcfc;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logos img:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.customer-service, .contact-info {
+    padding-left: 20px; /* Add some padding for visual separation on larger screens */
+}
+
+.customer-service h3, .contact-info h3 {
+    font-size: 18px;
+    color: #343a40;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.customer-service ul {
+    list-style: none;
+    padding: 0;
+}
+
+.customer-service ul li {
+    margin-bottom: 8px;
+}
+
+.customer-service ul li a {
+    color: #495057;
+    transition: color 0.2s ease;
+}
+
+.customer-service ul li a:hover {
+    color: #007bff;
+}
+
+.contact-info p {
+    font-size: 15px;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.social-media {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.social-media img {
+    width: 30px;
+    height: 30px;
+    transition: transform 0.2s ease;
+}
+
+.social-media img:hover {
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    background: #212529;
+    color: #adb5bd;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    margin-top: 20px;
+    border-radius: 8px; /* Match the main info section radius */
+}
+
+@media (min-width: 769px) {
+    .info-grid {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .payment-shipping-methods {
+        width: 30%;
+    }
+    .customer-service, .contact-info {
+        width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-shipping-methods, .customer-service, .contact-info {
+        width: 100%;
+        padding-left: 0; /* Remove padding on small screens */
+    }
+}
+
+/* order_history.css */
+
+/* Main container for order history */
+.order-history-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.order-history-container h2 {
+    text-align: center;
+    color: #343a40;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Styling for individual order cards */
+.order-card {
+    background-color: #f8f9fa; /* Light background for cards */
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.order-card h3 {
+    margin-top: 0;
+    color: #007bff; /* Primary color for order ID */
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.order-card p {
+    margin: 8px 0;
+    font-size: 0.95em;
+    color: #495057;
+}
+
+.order-card strong {
+    color: #343a40;
+}
+
+.order-card .status-badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85em;
+    display: inline-block; /* Make it fit content */
+    margin-left: 10px;
+}
+
+/* Status specific colors */
+.status-badge.completed { background-color: #d4edda; color: #28a745; } /* Green */
+.status-badge.processing { background-color: #fff3cd; color: #ffc107; } /* Yellow */
+.status-badge.shipped { background-color: #d1ecf1; color: #17a2b8; } /* Info Blue */
+.status-badge.cancelled { background-color: #f8d7da; color: #dc3545; } /* Red */
+.status-badge.pending { background-color: #e2e3e5; color: #6c757d; } /* Gray */
+
+
+.order-card .items-list {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #e9ecef;
+}
+
+.order-card .items-list h4 {
+    font-size: 1.1em;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+.order-card .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dotted #dee2e6;
+    font-size: 0.9em;
+    color: #495057;
+}
+
+.order-card .item:last-child {
+    border-bottom: none;
+}
+
+.order-card .total {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+    font-size: 1.1em;
+    color: #343a40;
+}
+
+/* "No orders" message */
+#noOrdersMessage {
+    padding: 40px;
+    font-size: 1.1em;
+    color: #6c757d;
+}
+
+/* Load More button - using existing btn-secondary class */
+#loadMoreBtn {
+    display: block;
+    margin: 30px auto 0; /* Center the button */
+    padding: 12px 25px;
+    font-size: 1.1em;
+    width: auto;
+    min-width: 180px;
 }
