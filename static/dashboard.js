@@ -123,7 +123,7 @@ const showLoginFromOtpLink = document.getElementById('showLoginFromOtp');
 
 // Temporary storage for user registration/reset data during OTP flow
 let tempUserData = null;
-let currentOtp = null;
+let currentOtp = null; // This will now be set to a fixed value
 let otpPurpose = null; // 'register' or 'reset'
 
 // Product Detail Modal DOM elements
@@ -336,7 +336,7 @@ window.register = function() {
     otpPurpose = 'register';
     sendOtp(email); // Simulate sending OTP to email
 
-    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${email}. Silakan cek email Anda. (Simulasi: OTP: ${currentOtp})`;
+    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${email}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
     window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
     window.showForm('otp'); // Show OTP verification form
 };
@@ -360,7 +360,7 @@ window.resetPassword = function() {
         otpPurpose = 'reset';
         sendOtp(foundUser.email); // Simulate sending OTP to user's registered email
 
-        if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${foundUser.email}. Silakan cek email Anda. (Simulasi: OTP: ${currentOtp})`;
+        if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${foundUser.email}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
         window.showToast('Instruksi reset kata sandi telah dikirim. Mohon verifikasi.', 'info');
         window.showForm('otp'); // Show OTP verification form
         forgotIdInput.value = '';
@@ -384,8 +384,9 @@ function sendOtp(destination) {
     // 4. Return a success/failure response.
     // -------------------------------------
 
-    // For simulation: Generate a 6-digit OTP and log it.
-    currentOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    // For simulation: Use a fixed 6-digit OTP for easy testing.
+    currentOtp = '123456'; // FIXED DUMMY OTP
+
     console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
 }
 
