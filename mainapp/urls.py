@@ -12,4 +12,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('order_history/', views.order_history, name='history'),
     path('privacy_policy/', views.privacy_policy, name='privacy'),
+    path('help_faq/', views.help_faq, name='help'),
+    path('tutorial/', views.tutorial, name='tutorial'),
 ]

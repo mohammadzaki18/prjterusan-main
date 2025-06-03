@@ -59,55 +59,34 @@
 <footer>
   <div class="info-section">
     <div class="info-grid">
-      <div class="payment-shipping-methods">
-        <div class="method-section">
-          <h3>Metode Pembayaran</h3>
-          <div class="logos payment-logos">
-            <img src="https://via.placeholder.com/80x40/007bff/ffffff?text=BCA" alt="BCA">
-            <img src="https://via.placeholder.com/80x40/007bff/ffffff?text=Mandiri" alt="Mandiri">
-            <img src="https://via.placeholder.com/80x40/dc3545/ffffff?text=BRI" alt="BRI">
-            <img src="https://via.placeholder.com/80x40/0056b3/ffffff?text=BNI" alt="BNI">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=CIMB" alt="CIMB Niaga">
-            <img src="https://via.placeholder.com/80x40/fd7e14/ffffff?text=Permata" alt="PermataBank">
-            <img src="https://via.placeholder.com/80x40/6610f2/ffffff?text=Maybank" alt="Maybank">
-            <img src="https://via.placeholder.com/80x40/20c997/ffffff?text=DANA" alt="DANA">
-            <img src="https://via.placeholder.com/80x40/17a2b8/ffffff?text=OVO" alt="OVO">
-            <img src="https://via.placeholder.com/80x40/ffc107/ffffff?text=LinkAja" alt="LinkAja">
-          </div>
-        </div>
-        <div class="method-section">
-          <h3>Metode Pengiriman</h3>
-          <div class="logos shipping-logos">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=JNE" alt="JNE">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=TIKI" alt="TIKI">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=SiCepat" alt="SiCepat">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=Anteraja" alt="Anteraja">
-            <img src="https://via.placeholder.com/80x40/6c757d/ffffff?text=Ninja" alt="Ninja Express">
-          </div>
+      <div class="method-section">
+        <h3>Metode Pembayaran</h3>
+        <div class="logos payment-logos">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968390.png" alt="Bank BCA">
+          <img src="https://cdn-icons-png.flation.com/512/5968/5968412.png" alt="Bank Mandiri">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968434.png" alt="Bank BRI">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968461.png" alt="Bank BNI">
+          <img src="https://cdn-icons-png.flaticon.com/512/825/825479.png" alt="DANA">
+          <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="OVO">
+          <img src="https://cdn-icons-png.flaticon.com/512/825/825531.png" alt="LinkAja">
         </div>
       </div>
 
       <div class="customer-service">
         <h3>Layanan Pelanggan</h3>
         <ul>
-          <li><a href="#">Bantuan & FAQ</a></li>
-          <li><a href="#">Cara Belanja</a></li>
+          <li><a href="{% url 'help' %}">Bantuan & FAQ</a></li>
+          <li><a href="{% url 'tutorial' %}">Cara Belanja</a></li>
           <li><a href="#">Pengembalian Barang</a></li>
-          <li><a href="#">Kebijakan Privasi</a></li>
-          <li><a href="#">Syarat & Ketentuan</a></li>
+          <li><a href="{% url 'privacy' %}">Kebijakan Privasi</a></li>
         </ul>
       </div>
 
       <div class="contact-info">
         <h3>Hubungi Kami</h3>
-        <p>Email: info@terusanminimarket.com</p>
-        <p>Telepon: (021) 1234 5678</p>
-        <p>Jam Operasional: 08:00 - 21:00 WIB</p>
-        <div class="social-media">
-          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174848.png" alt="Facebook"></a>
-          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram"></a>
-          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174883.png" alt="Twitter"></a>
-        </div>
+        <a href="https://wa.me/+6283808802544" target="_blank">
+        <i class="fab fa-whatsapp"></i> Chat via WhatsApp</a>
+        <p>Jam Operasional: 08:00 - 21:00 WIB (Setiap Hari)</p>
       </div>
     </div>
   </div>
