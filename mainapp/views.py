@@ -24,3 +24,5 @@ def help_faq(request):
     return render(request, 'help_faq.html')
 def tutorial(request):
     return render(request, 'tutorial.html')
+def return_req(request):
+    return render(request, 'return_req.html')

@@ -14,4 +14,5 @@ urlpatterns = [
     path('privacy_policy/', views.privacy_policy, name='privacy'),
     path('help_faq/', views.help_faq, name='help'),
     path('tutorial/', views.tutorial, name='tutorial'),
+    path('return_req/', views.return_req, name='return'),
 ]
