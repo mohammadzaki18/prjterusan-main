@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cara Belanja | TerusanMinimarket</title>
   <link rel="stylesheet" type="text/css" href="{% static 'global.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'how_to_shop.css' %}">
 </head>
 <body>
 
@@ -112,7 +111,7 @@
           <span class="step-number">7</span>
         </div>
         <h3>Pesanan Diproses & Dikirim</h3>
-        <p>Setelah pembayaran terverifikasi, pesanan Anda akan segera kami proses dan kirimkan. Anda akan menerima notifikasi dan nomor resi untuk melacak pengiriman.</p>
+        <p>Setelah pembayaran terverifikasi, pesanan Anda akan segera kami proses dan kirimkan.</p>
       </div>
     </div>
 
@@ -144,7 +143,7 @@
         <ul>
           <li><a href="{% url 'help' %}">Bantuan & FAQ</a></li>
           <li><a href="{% url 'tutorial' %}">Cara Belanja</a></li>
-          <li><a href="#">Pengembalian Barang</a></li>
+          <li><a href="{% url 'return' %}">Pengembalian Barang</a></li>
           <li><a href="{% url 'privacy' %}">Kebijakan Privasi</a></li>
         </ul>
       </div>
