@@ -77,7 +77,7 @@
 
       <div class="customer-service">
         <h3>Layanan Pelanggan</h3>
-        <ul>
+         <ul>
           <li><a href="{% url 'help' %}">Bantuan & FAQ</a></li>
           <li><a href="{% url 'tutorial' %}">Cara Belanja</a></li>
           <li><a href="{% url 'return' %}">Pengembalian Barang</a></li>
@@ -150,8 +150,8 @@
       <h2>Verifikasi OTP</h2>
       <p id="otpMessage" class="text-center text-secondary">Masukkan kode OTP yang telah dikirim ke email Anda.</p>
       <input type="text" id="otpInput" placeholder="Kode OTP" required maxlength="6">
-      <button type="submit" class="btn btn-primary" id="btnVerifyOtp">Verifikasi</button>
-      <button type="button" class="btn btn-link" id="showLoginFromOtp">Kembali ke Masuk</button>
+      <p id="otpError" class="error-message"></p> <button type="submit" class="btn btn-primary" id="btnVerifyOtp">Verifikasi</button>
+      <button type="button" class="btn btn-link" id="btnResendOtp">Kirim Ulang OTP</button> <button type="button" class="btn btn-link" id="showLoginFromOtp">Kembali ke Masuk</button>
     </div>
   </div>
 </div>

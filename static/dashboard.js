@@ -8,7 +8,8 @@ const products = [
         price: 12000,
         description: "Beras kualitas premium 5kg. Beras ini dipilih dari varietas terbaik, diolah dengan teknologi modern untuk menghasilkan bulir beras yang utuh dan bersih. Cocok untuk konsumsi sehari-hari keluarga.",
         category: "Kebutuhan Pokok",
-        image: "https://cdn-icons-png.flaticon.com/512/1256/1256425.png"
+        image: "https://cdn-icons-png.flaticon.com/512/1256/1256425.png",
+        stock: 50 // Added stock for realistic cart logic
     },
     {
         id: 2,
@@ -16,7 +17,8 @@ const products = [
         price: 15000,
         description: "Minyak goreng kemasan 1L. Terbuat dari kelapa sawit pilihan, kaya akan Vitamin A dan D. Ideal untuk menggoreng dan menumis, memberikan rasa gurih pada masakan Anda.",
         category: "Kebutuhan Pokok",
-        image: "https://cdn-icons-png.flaticon.com/512/2938/2938499.png"
+        image: "https://cdn-icons-png.flaticon.com/512/2938/2938499.png",
+        stock: 30 // Added stock for realistic cart logic
     },
     {
         id: 3,
@@ -24,7 +26,8 @@ const products = [
         price: 8000,
         description: "Susu UHT rasa coklat 200ml. Susu siap minum dengan rasa coklat yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
         category: "Minuman",
-        image: "https://cdn-icons-png.flaticon.com/512/2739/2739178.png"
+        image: "https://cdn-icons-png.flaticon.com/512/2739/2739178.png",
+        stock: 100 // Added stock for realistic cart logic
     },
     {
         id: 4,
@@ -32,7 +35,8 @@ const products = [
         price: 28000,
         description: "Telur ayam negeri 1 lusin. Sumber protein hewani yang murah dan mudah didapat. Cocok untuk berbagai olahan masakan.",
         category: "Kebutuhan Pokok",
-        image: "https://cdn-icons-png.flaticon.com/512/3209/3209028.png"
+        image: "https://cdn-icons-png.flaticon.com/512/3209/3209028.png",
+        stock: 20 // Added stock for realistic cart logic
     },
     {
         id: 5,
@@ -40,7 +44,8 @@ const products = [
         price: 9500,
         description: "Kopi instan sachet. Praktis untuk dinikmati kapan saja. Rasakan sensasi kopi nikmat di setiap tegukan.",
         category: "Minuman",
-        image: "https://cdn-icons-png.flaticon.com/512/924/924765.png"
+        image: "https://cdn-icons-png.flaticon.com/512/924/924765.png",
+        stock: 75 // Added stock for realistic cart logic
     },
     {
         id: 6,
@@ -48,7 +53,8 @@ const products = [
         price: 7000,
         description: "Sabun mandi batangan dengan aroma lavender. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
         category: "Perlengkapan Mandi",
-        image: "https://cdn-icons-png.flaticon.com/512/3035/3035974.png"
+        image: "https://cdn-icons-png.flaticon.com/512/3035/3035974.png",
+        stock: 40 // Added stock for realistic cart logic
     },
     {
         id: 7,
@@ -56,7 +62,8 @@ const products = [
         price: 12000,
         description: "Pasta gigi dengan formula perlindungan total. Melindungi gigi dari gigi berlubang dan bau mulut. Nafas segar sepanjang hari.",
         category: "Perlengkapan Mandi",
-        image: "https://cdn-icons-png.flaticon.com/512/575/575314.png"
+        image: "https://cdn-icons-png.flaticon.com/512/575/575314.png",
+        stock: 60 // Added stock for realistic cart logic
     },
     {
         id: 8,
@@ -64,7 +71,8 @@ const products = [
         price: 25000,
         description: "Deterjen bubuk konsentrat 500g. Membersihkan pakaian lebih bersih dan efektif. Pakaian wangi dan bebas noda membandel.",
         category: "Pembersih Rumah",
-        image: "https://cdn-icons-png.flaticon.com/512/2553/2553655.png"
+        image: "https://cdn-icons-png.flaticon.com/512/2553/2553655.png",
+        stock: 25 // Added stock for realistic cart logic
     },
     {
         id: 9,
@@ -72,7 +80,8 @@ const products = [
         price: 18000,
         description: "Obat nyamuk semprot efektif usir nyamuk dan serangga. Perlindungan maksimal untuk keluarga. Aman digunakan di dalam ruangan.",
         category: "Pembersih Rumah",
-        image: "https://cdn-icons-png.flaticon.com/512/488/488737.png"
+        image: "https://cdn-icons-png.flaticon.com/512/488/488737.png",
+        stock: 35 // Added stock for realistic cart logic
     },
     {
         id: 10,
@@ -80,7 +89,8 @@ const products = [
         price: 8500,
         description: "Snack kentang renyah dengan rasa balado. Cocok untuk camilan saat bersantai. Teman ngopi yang pas.",
         category: "Camilan",
-        image: "https://cdn-icons-png.flaticon.com/512/820/820150.png"
+        image: "https://cdn-icons-png.flaticon.com/512/820/820150.png",
+        stock: 80 // Added stock for realistic cart logic
     }
 ];
 
@@ -118,13 +128,16 @@ const toast = document.getElementById('toast');
 const otpVerificationForm = document.getElementById('otpVerificationForm');
 const otpInput = document.getElementById('otpInput');
 const otpMessage = document.getElementById('otpMessage');
+const otpError = document.getElementById('otpError');
 const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+const btnResendOtp = document.getElementById('btnResendOtp');
 const showLoginFromOtpLink = document.getElementById('showLoginFromOtp');
 
 // Temporary storage for user registration/reset data during OTP flow
 let tempUserData = null;
-let currentOtp = null; // This will now be set to a fixed value
+let currentOtp = null; // This will now be set to a fixed value for simulation
 let otpPurpose = null; // 'register' or 'reset'
+let currentOtpUserIdentifier = null; // Menyimpan email/phone tujuan OTP
 
 // Product Detail Modal DOM elements
 const productDetailModal = document.getElementById('productDetailModal');
@@ -140,7 +153,7 @@ const modalAddToCartBtn = document.getElementById('modalAddToCartBtn');
 const catalogContainer = document.getElementById('catalog');
 const categoryFilter = document.getElementById('categoryFilter');
 const searchInput = document.getElementById('searchInput');
-const accountDropdown = document.getElementById('accountDropdown'); // Added this as it was missing from original DOM elements but used.
+const accountDropdown = document.getElementById('accountDropdown');
 
 // --- Global Utility Functions ---
 
@@ -208,7 +221,6 @@ function updateAddToCartButtonsVisibility(isLoggedIn) {
     }
 }
 
-
 /**
  * Shows a specific authentication form (login, register, forgot password, otp verification) in the modal.
  * @param {string} formName - 'login', 'register', 'forgot', or 'otp'.
@@ -217,11 +229,14 @@ window.showForm = function(formName) {
     if (loginForm) loginForm.style.display = 'none';
     if (registerForm) registerForm.style.display = 'none';
     if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
-    if (otpVerificationForm) otpVerificationForm.style.display = 'none'; // Hide OTP form
+    if (otpVerificationForm) otpVerificationForm.style.display = 'none';
+    
+    // Clear all error/info messages
     if (loginError) loginError.textContent = '';
     if (registerError) registerError.textContent = '';
     if (forgotError) forgotError.textContent = '';
     if (otpMessage) otpMessage.textContent = '';
+    if (otpError) otpError.textContent = '';
 
     if (formName === 'login' && loginForm) {
         loginForm.style.display = 'block';
@@ -229,7 +244,7 @@ window.showForm = function(formName) {
         registerForm.style.display = 'block';
     } else if (formName === 'forgot' && forgotPasswordForm) {
         forgotPasswordForm.style.display = 'block';
-    } else if (formName === 'otp' && otpVerificationForm) { // Show OTP form
+    } else if (formName === 'otp' && otpVerificationForm) {
         otpVerificationForm.style.display = 'block';
     }
 };
@@ -265,13 +280,6 @@ window.logout = function() {
     window.saveUserToLocalStorage(null); // Clear current user
     window.updateAuthUI(); // Update UI
     window.showToast('Anda telah logout.', 'info');
-    // Clear the specific user's cart on logout
-    // Note: You might want to keep the cart for when they log back in
-    // For now, let's clear it completely if a user logs out
-    const currentUser = window.loadUserFromLocalStorage();
-    if (currentUser) {
-        localStorage.removeItem(`cart_${currentUser.username}`);
-    }
 };
 
 /**
@@ -291,8 +299,7 @@ window.login = function() {
         window.updateAuthUI();
         if (authModal) authModal.style.display = 'none';
         window.showToast('Login berhasil!', 'success');
-        // Refresh products to show/hide add to cart buttons
-        renderProducts(products); // Assuming products are always available globally
+        renderProducts(products); // Refresh products to show/hide add to cart buttons
     } else {
         if (loginError) loginError.textContent = 'ID atau kata sandi salah.';
         window.showToast('Login gagal!', 'error');
@@ -334,9 +341,9 @@ window.register = function() {
     // Store user data temporarily and send OTP
     tempUserData = { username, name, email, phone, password, address: '' };
     otpPurpose = 'register';
+    currentOtpUserIdentifier = email; // Simpan identifier untuk resend OTP
     sendOtp(email); // Simulate sending OTP to email
 
-    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${email}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
     window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
     window.showForm('otp'); // Show OTP verification form
 };
@@ -355,12 +362,11 @@ window.resetPassword = function() {
     const foundUser = users.find(u => u.username === id || u.email === id || u.phone === id);
 
     if (foundUser) {
-        // In a real application, you would send a reset link/OTP to their email
         tempUserData = foundUser; // Store the found user for later password update
         otpPurpose = 'reset';
+        currentOtpUserIdentifier = foundUser.email; // Simpan identifier untuk resend OTP
         sendOtp(foundUser.email); // Simulate sending OTP to user's registered email
 
-        if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${foundUser.email}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
         window.showToast('Instruksi reset kata sandi telah dikirim. Mohon verifikasi.', 'info');
         window.showForm('otp'); // Show OTP verification form
         forgotIdInput.value = '';
@@ -376,17 +382,16 @@ window.resetPassword = function() {
  * @param {string} destination - The email or phone number to send the OTP to.
  */
 function sendOtp(destination) {
-    // --- SERVER-SIDE LOGIC SIMULATION ---
-    // In a real application:
-    // 1. Generate a cryptographically secure random OTP.
-    // 2. Store the OTP linked to the user/session with an expiry time.
-    // 3. Use a mail service (e.g., SendGrid, Mailgun, NodeMailer) to send the OTP to 'destination'.
-    // 4. Return a success/failure response.
-    // -------------------------------------
+    // Clear previous OTP messages and errors before sending new one
+    if (otpMessage) otpMessage.textContent = '';
+    if (otpError) otpError.textContent = '';
 
     // For simulation: Use a fixed 6-digit OTP for easy testing.
     currentOtp = '123456'; // FIXED DUMMY OTP
 
+    // Display a message that OTP has been sent (even if dummy)
+    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${destination}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
+    window.showToast(`OTP baru telah dikirim ke ${destination}.`, 'success');
     console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
 }
 
@@ -397,16 +402,10 @@ window.verifyOtp = function() {
     const enteredOtp = otpInput.value.trim();
 
     if (!enteredOtp) {
-        if (otpMessage) otpMessage.textContent = 'Mohon masukkan OTP.';
+        if (otpError) otpError.textContent = 'Mohon masukkan OTP.';
         return;
     }
-
-    // --- SERVER-SIDE LOGIC SIMULATION ---
-    // In a real application:
-    // 1. Send the entered OTP and user identifier to the backend.
-    // 2. Backend verifies the OTP against the stored one, checking expiry.
-    // 3. If valid, backend marks the user/session as verified and proceeds.
-    // -------------------------------------
+    if (otpError) otpError.textContent = ''; // Clear previous error
 
     if (enteredOtp === currentOtp) {
         if (otpPurpose === 'register') {
@@ -424,22 +423,32 @@ window.verifyOtp = function() {
             regPasswordInput.value = '';
 
         } else if (otpPurpose === 'reset') {
-            // In a real app, here you would direct the user to a "set new password" page
-            // For this client-side simulation, let's just allow them to "login" if they remember it.
-            // A better simulation would be to prompt for new password after successful OTP.
             window.showToast('Verifikasi OTP berhasil! Anda bisa login dengan kata sandi yang ada atau coba reset lagi.', 'success');
             window.showForm('login'); // Go back to login
         }
-        // Clear OTP related temporary data
+        // Clear OTP related temporary data and input field
         tempUserData = null;
         currentOtp = null;
         otpPurpose = null;
+        currentOtpUserIdentifier = null;
         otpInput.value = '';
         if (authModal) authModal.style.display = 'none'; // Close modal after successful verification
     } else {
-        if (otpMessage) otpMessage.textContent = 'OTP salah. Mohon coba lagi.';
+        if (otpError) otpError.textContent = 'OTP salah. Mohon coba lagi.';
         window.showToast('Verifikasi OTP gagal!', 'error');
     }
+};
+
+/**
+ * Handles resending the OTP.
+ */
+window.resendOtp = function() {
+    if (!currentOtpUserIdentifier) {
+        if (otpError) otpError.textContent = 'Tidak ada tujuan OTP yang tersimpan. Silakan kembali ke form sebelumnya.';
+        window.showToast('Gagal mengirim ulang OTP. Data tujuan tidak ditemukan.', 'error');
+        return;
+    }
+    sendOtp(currentOtpUserIdentifier);
 };
 
 
@@ -611,6 +620,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeAuthModal) {
         closeAuthModal.addEventListener('click', () => {
             if (authModal) authModal.style.display = 'none';
+            // Clear temporary OTP data when modal is closed manually
+            tempUserData = null;
+            currentOtp = null;
+            otpPurpose = null;
+            currentOtpUserIdentifier = null;
+            otpInput.value = '';
+            if (otpMessage) otpMessage.textContent = '';
+            if (otpError) otpError.textContent = '';
         });
     }
 
@@ -619,13 +636,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (showLoginFromRegisterLink) showLoginFromRegisterLink.addEventListener('click', () => window.showForm('login'));
     if (showForgotPasswordLink) showForgotPasswordLink.addEventListener('click', () => window.showForm('forgot'));
     if (showLoginFromForgotLink) showLoginFromForgotLink.addEventListener('click', () => window.showForm('login'));
-    if (showLoginFromOtpLink) showLoginFromOtpLink.addEventListener('click', () => window.showForm('login')); // New: from OTP to login
+    if (showLoginFromOtpLink) showLoginFromOtpLink.addEventListener('click', () => window.showForm('login'));
 
     // Auth form submissions
     if (btnLoginSubmit) btnLoginSubmit.addEventListener('click', window.login);
     if (btnRegisterSubmit) btnRegisterSubmit.addEventListener('click', window.register);
     if (btnResetPassword) btnResetPassword.addEventListener('click', window.resetPassword);
-    if (btnVerifyOtp) btnVerifyOtp.addEventListener('click', window.verifyOtp); // New: OTP verification
+    if (btnVerifyOtp) btnVerifyOtp.addEventListener('click', window.verifyOtp);
+    if (btnResendOtp) btnResendOtp.addEventListener('click', window.resendOtp);
 
     // --- Dashboard Specific Logic ---
 
