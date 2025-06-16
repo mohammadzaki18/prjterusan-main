@@ -1,5 +1,5 @@
 // dashboard.js - This file will contain global functions and dashboard specific logic
-
+console.log("dashboard.js loaded");
 // Global variables (mock data for products and users)
 const products = [
     {
@@ -108,10 +108,10 @@ const showRegisterLink = document.getElementById('showRegister');
 const showLoginFromRegisterLink = document.getElementById('showLoginFromRegister');
 const showForgotPasswordLink = document.getElementById('showForgotPassword');
 const showLoginFromForgotLink = document.getElementById('showLoginFromForgot');
-const btnLoginSubmit = document.getElementById('btnLoginSubmit');
-const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
-const btnResetPassword = document.getElementById('btnResetPassword');
-const loginIdInput = document.getElementById('loginId');
+// const btnLoginSubmit = document.getElementById('btnLoginSubmit');
+// const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
+// const btnResetPassword = document.getElementById('btnResetPassword');
+const loginUsernameInput = document.getElementById('loginUsername');
 const loginPasswordInput = document.getElementById('loginPassword');
 const regUsernameInput = document.getElementById('regUsername');
 const regNameInput = document.getElementById('regName');
@@ -124,12 +124,20 @@ const registerError = document.getElementById('registerError');
 const forgotError = document.getElementById('forgotError');
 const toast = document.getElementById('toast');
 
+// Buttons to switch forms
+const showRegisterFromLogin = document.getElementById('showRegisterFromLogin');
+const showLoginFromRegister = document.getElementById('showLoginFromRegister');
+const showForgotFromLogin = document.getElementById('showForgotFromLogin');
+const showLoginFromForgot = document.getElementById('showLoginFromForgot');
+const showVerifyOtpFromLogin = document.getElementById('showVerifyOtpFromLogin'); // Added this if you want a direct link to OTP form
+const showLoginFromOtp = document.getElementById('showLoginFromOtp');
+
 // New OTP related DOM elements
 const otpVerificationForm = document.getElementById('otpVerificationForm');
 const otpInput = document.getElementById('otpInput');
 const otpMessage = document.getElementById('otpMessage');
 const otpError = document.getElementById('otpError');
-const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+// let btnVerifyOtp = document.getElementById('btnVerifyOtp');
 const btnResendOtp = document.getElementById('btnResendOtp');
 const showLoginFromOtpLink = document.getElementById('showLoginFromOtp');
 
@@ -226,6 +234,7 @@ function updateAddToCartButtonsVisibility(isLoggedIn) {
  * @param {string} formName - 'login', 'register', 'forgot', or 'otp'.
  */
 window.showForm = function(formName) {
+    console.log(formName)
     if (loginForm) loginForm.style.display = 'none';
     if (registerForm) registerForm.style.display = 'none';
     if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
@@ -286,12 +295,12 @@ window.logout = function() {
  * Handles user login.
  */
 window.login = function() {
-    const id = loginIdInput.value;
-    const password = loginPasswordInput.value;
+    const username = loginUsernameInput.value || '';
+    const password = loginPasswordInput.value || '';
 
     let users = JSON.parse(localStorage.getItem('users')) || [];
     const foundUser = users.find(u =>
-        (u.username === id || u.email === id || u.phone === id) && u.password === password
+        (u.username === username || u.email === username || u.phone === username) && u.password === password
     );
 
     if (foundUser) {
@@ -324,28 +333,35 @@ window.register = function() {
 
     let users = JSON.parse(localStorage.getItem('users')) || [];
 
-    // Simple validation for unique username/email/phone
     if (users.some(u => u.username === username)) {
-        if (registerError) registerError.textContent = 'Username sudah digunakan.';
+        registerError.textContent = 'Username sudah digunakan.';
         return;
     }
     if (users.some(u => u.email === email)) {
-        if (registerError) registerError.textContent = 'Email sudah digunakan.';
+        registerError.textContent = 'Email sudah digunakan.';
         return;
     }
     if (users.some(u => u.phone === phone)) {
-        if (registerError) registerError.textContent = 'Nomor telepon sudah digunakan.';
+        registerError.textContent = 'Nomor telepon sudah digunakan.';
         return;
     }
 
-    // Store user data temporarily and send OTP
+    registerError.textContent = '';
+
+    // Simpan data sementara
     tempUserData = { username, name, email, phone, password, address: '' };
     otpPurpose = 'register';
-    currentOtpUserIdentifier = email; // Simpan identifier untuk resend OTP
-    sendOtp(email); // Simulate sending OTP to email
+    currentOtpUserIdentifier = email;
 
-    window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
-    window.showForm('otp'); // Show OTP verification form
+    // Kirim OTP via backend (Django)
+    sendOtp(email);
+    // const otpSent = await sendOtp(email);
+    // if (otpSent) {
+    //     window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
+    //     window.showForm('otp'); // Tampilkan form OTP hanya jika sukses
+    // } else {
+    //     window.showToast('Gagal mengirim OTP.', 'error');
+    // }
 };
 
 /**
@@ -381,68 +397,176 @@ window.resetPassword = function() {
  * The backend would generate a secure OTP, send it via email/SMS, and store it for verification.
  * @param {string} destination - The email or phone number to send the OTP to.
  */
-function sendOtp(destination) {
-    // Clear previous OTP messages and errors before sending new one
-    if (otpMessage) otpMessage.textContent = '';
-    if (otpError) otpError.textContent = '';
 
-    // For simulation: Use a fixed 6-digit OTP for easy testing.
-    currentOtp = '123456'; // FIXED DUMMY OTP
+// function sendOtp(destination) {
+//     // Clear previous OTP messages and errors before sending new one
+//     if (otpMessage) otpMessage.textContent = '';
+//     if (otpError) otpError.textContent = '';
 
-    // Display a message that OTP has been sent (even if dummy)
-    if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${destination}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
-    window.showToast(`OTP baru telah dikirim ke ${destination}.`, 'success');
-    console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
+//     // For simulation: Use a fixed 6-digit OTP for easy testing.
+//     currentOtp = '123456'; // FIXED DUMMY OTP
+
+//     // Display a message that OTP has been sent (even if dummy)
+//     if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${destination}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
+//     window.showToast(`OTP baru telah dikirim ke ${destination}.`, 'success');
+//     console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
+// }
+
+async function checkLoginStatus() {
+    try {
+        const response = await fetch('/api/current_user/', {
+            method: 'GET',
+            credentials: 'include'  // penting agar cookie session dikirim
+        });
+        const data = await response.json();
+
+        if (data.is_authenticated) {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('accountMenu').style.display = 'block';
+            document.getElementById('accountUsername').textContent = data.username;
+        } else {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('accountMenu').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error checking login status:', error);
+    }
+}
+
+async function sendOtp(emailOrUsername) {
+  currentOtpUserIdentifier = emailOrUsername; // ✅ store it globally before anything
+
+  const response = await fetch('/api/send-otp/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email_or_username: emailOrUsername })
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    window.showToast(result.message || 'OTP berhasil dikirim.', 'success');
+    window.showForm('otp'); // ✅ Show OTP form here
+  } else {
+    window.showToast(result.message || 'Gagal mengirim OTP.', 'error');
+  }
 }
 
 /**
  * Verifies the entered OTP.
  */
-window.verifyOtp = function() {
-    const enteredOtp = otpInput.value.trim();
+window.verifyOtp = async function () {
+    const otpInput = document.getElementById('otp-input');
+    const otpError = document.getElementById('otp-error');
+    const identifierInput = document.getElementById('otp-identifier'); // input hidden or visible with email/username
+
+    const enteredOtp = otpInput?.value.trim();
+    const identifier = identifierInput?.value.trim();
+
+    if (otpError) otpError.textContent = '';
 
     if (!enteredOtp) {
-        if (otpError) otpError.textContent = 'Mohon masukkan OTP.';
+        otpError.textContent = 'Mohon masukkan OTP.';
         return;
     }
-    if (otpError) otpError.textContent = ''; // Clear previous error
 
-    if (enteredOtp === currentOtp) {
-        if (otpPurpose === 'register') {
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            users.push(tempUserData);
-            localStorage.setItem('users', JSON.stringify(users));
+    if (!identifier) {
+        otpError.textContent = 'Identitas pengguna tidak ditemukan.';
+        return;
+    }
 
-            window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
-            window.showForm('login');
-            // Clear registration form fields
-            regUsernameInput.value = '';
-            regNameInput.value = '';
-            regEmailInput.value = '';
-            regPhoneInput.value = '';
-            regPasswordInput.value = '';
+    try {
+        const response = await fetch('/verify-otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()  // Required if CSRF is enforced
+            },
+            body: JSON.stringify({
+                email_or_username: identifier,
+                otp_code: enteredOtp
+            })
+        });
 
-        } else if (otpPurpose === 'reset') {
-            window.showToast('Verifikasi OTP berhasil! Anda bisa login dengan kata sandi yang ada atau coba reset lagi.', 'success');
-            window.showForm('login'); // Go back to login
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            window.showToast(result.message, 'success');
+            window.location.href = '/login/';  // Redirect after successful verification
+        } else {
+            otpError.textContent = result.message || 'OTP tidak valid.';
         }
-        // Clear OTP related temporary data and input field
-        tempUserData = null;
-        currentOtp = null;
-        otpPurpose = null;
-        currentOtpUserIdentifier = null;
-        otpInput.value = '';
-        if (authModal) authModal.style.display = 'none'; // Close modal after successful verification
-    } else {
-        if (otpError) otpError.textContent = 'OTP salah. Mohon coba lagi.';
-        window.showToast('Verifikasi OTP gagal!', 'error');
+    } catch (err) {
+        otpError.textContent = 'Terjadi kesalahan. Coba lagi.';
+        console.error(err);
     }
 };
+
+// Fungsi mengambil CSRF token (hanya jika tidak pakai @csrf_exempt)
+function getCsrfToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) return value;
+    }
+    return '';
+}
+
+
+//     otpError.textContent = ''; // Clear previous error
+
+//     try {
+//         const response = await fetch('/api/verify_otp/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 email_or_username: currentOtpUserIdentifier,
+//                 otp_code: enteredOtp
+//             })
+//         });
+
+//         const result = await response.json();
+
+//         if (result.success) {
+//             if (otpPurpose === 'register') {
+//                 window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
+//                 window.showForm('login');
+
+//                 // Clear registration form fields
+//                 regUsernameInput.value = '';
+//                 regNameInput.value = '';
+//                 regEmailInput.value = '';
+//                 regPhoneInput.value = '';
+//                 regPasswordInput.value = '';
+//             } else if (otpPurpose === 'reset') {
+//                 window.showToast('OTP valid. Silakan lanjutkan reset password.', 'success');
+//                 window.showForm('resetPassword'); // or wherever you want to send the user
+//             }
+
+//             // Clear OTP-related temporary data
+//             tempUserData = null;
+//             currentOtp = null;
+//             otpPurpose = null;
+//             currentOtpUserIdentifier = null;
+//             otpInput.value = '';
+//             if (authModal) authModal.style.display = 'none';
+//         } else {
+//             if (otpError) otpError.textContent = result.message || 'OTP salah.';
+//             window.showToast(result.message || 'Verifikasi OTP gagal.', 'error');
+//         }
+//     } catch (error) {
+//         console.error('Error verifying OTP:', error);
+//         if (otpError) otpError.textContent = 'Terjadi kesalahan saat memverifikasi OTP.';
+//         window.showToast('Kesalahan sistem saat verifikasi.', 'error');
+//     }
+// };
 
 /**
  * Handles resending the OTP.
  */
-window.resendOtp = function() {
+window.sendOtp = function() {
     if (!currentOtpUserIdentifier) {
         if (otpError) otpError.textContent = 'Tidak ada tujuan OTP yang tersimpan. Silakan kembali ke form sebelumnya.';
         window.showToast('Gagal mengirim ulang OTP. Data tujuan tidak ditemukan.', 'error');
@@ -495,11 +619,26 @@ function renderProducts(filteredProducts) {
         if (addToCartBtn) {
             addToCartBtn.addEventListener('click', (e) => {
                 e.stopPropagation(); // Prevent product detail modal from opening
-                addToCart(parseInt(e.target.dataset.id));
+                addToCartBtn(parseInt(e.target.dataset.id));
             });
         }
     });
 }
+
+// Helper function to show/hide forms
+    function showForm(formToShow) {
+        console.log('tes')
+        document.querySelectorAll('.auth-form').forEach(form => {
+            form.style.display = 'none';
+        });
+        formToShow.style.display = 'block';
+        // Clear previous messages
+        loginError.textContent = '';
+        registerError.textContent = '';
+        forgotError.textContent = '';
+        otpError.textContent = '';
+        otpMessage.textContent = '';
+    }
 
 /**
  * Shows the product detail modal.
@@ -538,6 +677,216 @@ if (modalAddToCartBtn) {
     });
 }
 
+ // Initial form display (e.g., show login by default)
+    if (loginForm) showForm(loginForm); // Make sure to show a form when the page loads
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkLoginStatus(); // panggil ini di awal halaman
+// --- Login Logic ---
+    const btnLoginSubmit = document.getElementById('btnLoginSubmit');
+    if (btnLoginSubmit) {
+        btnLoginSubmit.addEventListener('click', async (e) => {
+            e.preventDefault();
+            // const usernameInput = document.getElementById('loginUsername');
+            // const passwordInput = document.getElementById('loginPassword');
+
+            const username = loginUsernameInput.value ? loginUsernameInput.value : '';
+            const password = loginPasswordInput.value ? loginPasswordInput.value : '';
+
+            try {
+                const response = await fetch('/api/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // <--- penting
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    loginError.textContent = '';
+                    alert(data.message); // Or display a success message
+                    window.location.href = '/'; // Redirect to dashboard or home
+                } else {
+                    loginError.textContent = data.message;
+                    if (data.message.includes('Account not activated')) {
+                        // If account not activated, show OTP form and pre-fill email/username
+                        otpMessage.textContent = 'Account not active. Please verify your email with OTP.';
+                        document.getElementById('otpInput').setAttribute('data-user-identifier', username); // Store username for OTP verification
+                        showForm(otpVerificationForm);
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.textContent = 'An error occurred during login.';
+            }
+        });
+    }
+
+    const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
+     // --- Registration Logic ---
+    if (btnRegisterSubmit) {
+        btnRegisterSubmit.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const regUsernameInput = document.getElementById('regUsername');
+            const regEmailInput = document.getElementById('regEmail');
+            const regPasswordInput = document.getElementById('regPassword');
+            const regNameInput = document.getElementById('regName');
+            const regPhoneInput = document.getElementById('regPhone');
+
+            const username = regUsernameInput?.value.trim();
+            const email = regEmailInput?.value.trim();
+            const password = regPasswordInput?.value;
+            const phone = regPhoneInput?.value.trim();
+            const name = regNameInput?.value.trim();
+
+            try {
+                console.log('Sending:', { username, email, password, phone, name });
+                const response = await fetch('/api/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password, phone, name })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    registerError.textContent = '';
+                    alert(data.message);
+                    otpMessage.textContent = data.message;
+                    document.getElementById('otpInput').setAttribute('data-user-identifier', email);
+                    showForm('otp');
+                } else {
+                    registerError.textContent = data.message;
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                registerError.textContent = 'An error occurred during registration.';
+            }
+        });
+    }
+
+     // --- Forgot Password / Send OTP Logic ---
+    const btnResetPassword = document.getElementById('btnResetPassword');
+    if (btnResetPassword) {
+        btnResetPassword.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const forgotIdInput = document.getElementById('forgotId');
+            const emailOrUsername = forgotIdInput ? forgotIdInput.value : '';
+
+            try {
+                const response = await fetch('/api/send_otp/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'X-CSRFToken': getCookie('csrftoken'), // Add this in production
+                    },
+                    body: JSON.stringify({ email_or_username: emailOrUsername })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    forgotError.textContent = '';
+                    otpMessage.textContent = data.message;
+                    document.getElementById('otpInput').setAttribute('data-user-identifier', emailOrUsername); // Store for verification
+                    showForm('otp');
+                } else {
+                    forgotError.textContent = data.message;
+                }
+            } catch (error) {
+                console.error('Send OTP error:', error);
+                forgotError.textContent = 'An error occurred while sending OTP.';
+            }
+        });
+    }
+
+    // --- OTP Verification Logic ---
+    const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+    if (btnVerifyOtp) {
+        btnVerifyOtp.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const otpInput = document.getElementById('otpInput');
+            const otpCode = otpInput ? otpInput.value.trim() : '';
+            const userIdentifier = currentOtpUserIdentifier; // ✅ Gunakan variabel global
+
+            if (!otpCode || !userIdentifier) {
+                otpError.textContent = 'OTP dan identitas pengguna diperlukan.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/verify_otp/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email_or_username: userIdentifier,
+                        otp_code: otpCode
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    otpError.textContent = '';
+                    alert(data.message);
+                    showForm('login'); // ✅ Ganti ke 'login' string, sesuai showForm yang kamu punya
+                } else {
+                    otpError.textContent = data.message || 'Verifikasi gagal.';
+                }
+            } catch (error) {
+                console.error('OTP verification error:', error);
+                otpError.textContent = 'Terjadi kesalahan saat memverifikasi OTP.';
+            }
+        });
+    }
+});
+
+    async function checkLoginStatus() {
+        try {
+            const response = await fetch('/api/get_current_user/', {
+                method: 'GET',
+                credentials: 'include'  // <-- penting agar kirim cookie
+            });
+            const data = await response.json();
+
+            if (data.is_authenticated) {
+                // Tampilkan menu akun
+                document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('accountMenu').style.display = 'block';
+                document.getElementById('accountUsername').textContent = data.username;
+            } else {
+                // Tampilkan tombol login
+                document.getElementById('authButtons').style.display = 'block';
+                document.getElementById('accountMenu').style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Failed to check login status', error);
+        }
+    }
+    // CSRF token retrieval for production (add this function)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ... (rest of your existing dashboard.js functions) ...
 // --- Cart Management Functions (Globalized for use across pages) ---
 
 /**
@@ -588,7 +937,7 @@ window.addToCart = function(productId) {
 
 // --- Event Listeners and Initializations ---
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     // Initial load of user data and update UI
     window.updateAuthUI();
 
@@ -597,6 +946,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRegisterHeader = document.getElementById('btnRegister');
     if (btnLoginHeader) btnLoginHeader.addEventListener('click', window.showLoginModal);
     if (btnRegisterHeader) btnRegisterHeader.addEventListener('click', window.showRegisterModal);
+
+ // Event listeners for form switching
+    if (showRegisterFromLogin) showRegisterFromLogin.addEventListener('click', () => showForm(registerForm));
+    if (showLoginFromRegister) showLoginFromRegister.addEventListener('click', () => showForm(loginForm));
+    if (showForgotFromLogin) showForgotFromLogin.addEventListener('click', () => showForm(forgotPasswordForm));
+    if (showLoginFromForgot) showLoginFromForgot.addEventListener('click', () => showForm(loginForm));
+    if (showLoginFromOtp) showLoginFromOtp.addEventListener('click', () => showForm(loginForm));
 
     // Event listener for account menu dropdown
     if (accountMenu && accountDropdown) {
@@ -614,7 +970,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Logout button
+    // if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
     if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+        try {
+            await fetch('/logout/', { method: 'GET', credentials: 'include' });
+            window.location.reload(); // reload page untuk update UI
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    });
 
     // Close auth modal
     if (closeAuthModal) {
@@ -631,6 +996,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Auth form elements (assuming these IDs exist in dashboard.html)
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    const otpVerificationForm = document.getElementById('otpVerificationForm');
+
     // Auth form navigation
     if (showRegisterLink) showRegisterLink.addEventListener('click', () => window.showForm('register'));
     if (showLoginFromRegisterLink) showLoginFromRegisterLink.addEventListener('click', () => window.showForm('login'));
@@ -643,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnRegisterSubmit) btnRegisterSubmit.addEventListener('click', window.register);
     if (btnResetPassword) btnResetPassword.addEventListener('click', window.resetPassword);
     if (btnVerifyOtp) btnVerifyOtp.addEventListener('click', window.verifyOtp);
-    if (btnResendOtp) btnResendOtp.addEventListener('click', window.resendOtp);
+    if (btnResendOtp) btnResendOtp.addEventListener('click', window.sendOtp);
 
     // --- Dashboard Specific Logic ---
 

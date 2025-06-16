@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-le7)t6#c(z%!d$0f$(_3m!#p30_(2xz-!c(rz=fy&nqi#pn3v!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -112,6 +112,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -120,7 +121,20 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# AUTH_USER_MODEL = 'mainapp.User'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# myproject/settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'haikalbyan44@gmail.com' 
+EMAIL_HOST_PASSWORD = 'tjox mjmb lotn eedk' 
+
+# Jika Anda menggunakan akun pengirim email lain (misal Mailgun, SendGrid), sesuaikan konfigurasinya.

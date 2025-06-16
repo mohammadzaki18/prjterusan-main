@@ -117,7 +117,7 @@
     <span class="close-button" id="closeAuthModal">&times;</span>
     <div id="loginForm" class="auth-form">
       <h2>Masuk</h2>
-      <input type="text" id="loginId" placeholder="Username / Email / No. Telepon" required>
+      <input type="text" id="loginUsername" name="username" placeholder="Username / Email / No. Telepon" required>
       <input type="password" id="loginPassword" placeholder="Kata Sandi" required>
       <p id="loginError" class="error-message"></p>
       <button type="submit" class="btn btn-primary" id="btnLoginSubmit">Masuk</button>
@@ -156,6 +156,6 @@
   </div>
 </div>
 
-<script src="{% static 'dashboard.js' %}"></script>
+<script src="{% static 'dashboard.js' %}?v=2"></script>
 </body>
 </html>

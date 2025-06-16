@@ -290,6 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+document.addEventListener('DOMContentLoaded', loadCartCount);
+
+
     // Event listener untuk tombol logout
     document.getElementById('logoutBtn')?.addEventListener('click', window.logout);
 
