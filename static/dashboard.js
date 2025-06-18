@@ -1,167 +1,175 @@
-// dashboard.js - This file will contain global functions and dashboard specific logic
+// dashboard.js - Mengandung semua fungsionalitas global, autentikasi, dan dashboard.
 console.log("dashboard.js loaded");
-// Global variables (mock data for products and users)
+
+// --- Global Variables (Product Mock Data & All DOM Elements) ---
+
+// Product Mock Data (Penting: Pastikan ini ada di dashboard.js)
 const products = [
     {
         id: 1,
         name: "Beras Premium",
         price: 12000,
-        description: "Beras kualitas premium 5kg. Beras ini dipilih dari varietas terbaik, diolah dengan teknologi modern untuk menghasilkan bulir beras yang utuh dan bersih. Cocok untuk konsumsi sehari-hari keluarga.",
+        description:
+            "Beras kualitas premium 5kg. Beras ini dipilih dari varietas terbaik, diolah dengan teknologi modern untuk menghasilkan bulir beras yang utuh dan bersih. Cocok untuk konsumsi sehari-hari keluarga.",
         category: "Kebutuhan Pokok",
         image: "https://cdn-icons-png.flaticon.com/512/1256/1256425.png",
-        stock: 50 // Added stock for realistic cart logic
+        stock: 50,
     },
     {
         id: 2,
         name: "Minyak Goreng",
         price: 15000,
-        description: "Minyak goreng kemasan 1L. Terbuat dari kelapa sawit pilihan, kaya akan Vitamin A dan D. Ideal untuk menggoreng dan menumis, memberikan rasa gurih pada masakan Anda.",
+        description:
+            "Minyak goreng kemasan 1L. Terbuat dari kelapa sawit pilihan, kaya akan Vitamin A dan D. Ideal untuk menggoreng dan menumis, memberikan rasa gurih pada masakan Anda.",
         category: "Kebutuhan Pokok",
         image: "https://cdn-icons-png.flaticon.com/512/2938/2938499.png",
-        stock: 30 // Added stock for realistic cart logic
+        stock: 30,
     },
     {
         id: 3,
         name: "Susu UHT",
         price: 8000,
-        description: "Susu UHT rasa coklat 200ml. Susu siap minum dengan rasa coklat yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
+        description:
+            "Susu UHT rasa coklat 200ml. Susu siap minum dengan rasa coklat yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
         category: "Minuman",
         image: "https://cdn-icons-png.flaticon.com/512/2739/2739178.png",
-        stock: 100 // Added stock for realistic cart logic
+        stock: 100,
     },
     {
         id: 4,
         name: "Telur Ayam",
         price: 28000,
-        description: "Telur ayam negeri 1 lusin. Sumber protein hewani yang murah dan mudah didapat. Cocok untuk berbagai olahan masakan.",
+        description:
+            "Telur ayam negeri 1 lusin. Sumber protein hewani yang murah dan mudah didapat. Cocok untuk berbagai olahan masakan.",
         category: "Kebutuhan Pokok",
         image: "https://cdn-icons-png.flaticon.com/512/3209/3209028.png",
-        stock: 20 // Added stock for realistic cart logic
+        stock: 20,
     },
     {
         id: 5,
         name: "Kopi Instan",
         price: 9500,
-        description: "Kopi instan sachet. Praktis untuk dinikmati kapan saja. Rasakan sensasi kopi nikmat di setiap tegukan.",
+        description:
+            "Kopi instan sachet. Praktis untuk dinikmati kapan saja. Rasakan sensasi kopi nikmat di setiap tegukan.",
         category: "Minuman",
         image: "https://cdn-icons-png.flaticon.com/512/924/924765.png",
-        stock: 75 // Added stock for realistic cart logic
+        stock: 75,
     },
     {
         id: 6,
         name: "Sabun Mandi",
         price: 7000,
-        description: "Sabun mandi batangan dengan aroma lavender. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
+        description:
+            "Sabun mandi batangan dengan aroma lavender. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
         category: "Perlengkapan Mandi",
         image: "https://cdn-icons-png.flaticon.com/512/3035/3035974.png",
-        stock: 40 // Added stock for realistic cart logic
+        stock: 40,
     },
     {
         id: 7,
         name: "Pasta Gigi",
         price: 12000,
-        description: "Pasta gigi dengan formula perlindungan total. Melindungi gigi dari gigi berlubang dan bau mulut. Nafas segar sepanjang hari.",
+        description:
+            "Pasta gigi dengan formula perlindungan total. Melindungi gigi dari gigi berlubang dan bau mulut. Nafas segar sepanjang hari.",
         category: "Perlengkapan Mandi",
         image: "https://cdn-icons-png.flaticon.com/512/575/575314.png",
-        stock: 60 // Added stock for realistic cart logic
+        stock: 60,
     },
     {
         id: 8,
         name: "Deterjen Pakaian",
         price: 25000,
-        description: "Deterjen bubuk konsentrat 500g. Membersihkan pakaian lebih bersih dan efektif. Pakaian wangi dan bebas noda membandel.",
+        description:
+            "Deterjen bubuk konsentrat 500g. Membersihkan pakaian lebih bersih dan efektif. Pakaian wangi dan bebas noda membandel.",
         category: "Pembersih Rumah",
         image: "https://cdn-icons-png.flaticon.com/512/2553/2553655.png",
-        stock: 25 // Added stock for realistic cart logic
+        stock: 25,
     },
     {
         id: 9,
         name: "Obat Nyamuk Semprot",
         price: 18000,
-        description: "Obat nyamuk semprot efektif usir nyamuk dan serangga. Perlindungan maksimal untuk keluarga. Aman digunakan di dalam ruangan.",
+        description:
+            "Obat nyamuk semprot efektif usir nyamuk dan serangga. Perlindungan maksimal untuk keluarga. Aman digunakan di dalam ruangan.",
         category: "Pembersih Rumah",
         image: "https://cdn-icons-png.flaticon.com/512/488/488737.png",
-        stock: 35 // Added stock for realistic cart logic
+        stock: 35,
     },
     {
         id: 10,
         name: "Snack Kentang",
         price: 8500,
-        description: "Snack kentang renyah dengan rasa balado. Cocok untuk camilan saat bersantai. Teman ngopi yang pas.",
+        description:
+            "Snack kentang renyah dengan rasa balado. Cocok untuk camilan saat bersantai. Teman ngopi yang pas.",
         category: "Camilan",
         image: "https://cdn-icons-png.flaticon.com/512/820/820150.png",
-        stock: 80 // Added stock for realistic cart logic
-    }
+        stock: 80,
+    },
 ];
 
 // Auth related DOM elements
-const authButtons = document.getElementById('authButtons');
-const accountMenu = document.getElementById('accountMenu');
-const accountUsername = document.getElementById('accountUsername');
-const logoutBtn = document.getElementById('logoutBtn');
-const authModal = document.getElementById('authModal');
-const closeAuthModal = document.getElementById('closeAuthModal');
-const loginForm = document.getElementById('loginForm');
-const registerForm = document.getElementById('registerForm');
-const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-const showRegisterLink = document.getElementById('showRegister');
-const showLoginFromRegisterLink = document.getElementById('showLoginFromRegister');
-const showForgotPasswordLink = document.getElementById('showForgotPassword');
-const showLoginFromForgotLink = document.getElementById('showLoginFromForgot');
-// const btnLoginSubmit = document.getElementById('btnLoginSubmit');
-// const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
-// const btnResetPassword = document.getElementById('btnResetPassword');
-const loginUsernameInput = document.getElementById('loginUsername');
-const loginPasswordInput = document.getElementById('loginPassword');
-const regUsernameInput = document.getElementById('regUsername');
-const regNameInput = document.getElementById('regName');
-const regEmailInput = document.getElementById('regEmail');
-const regPhoneInput = document.getElementById('regPhone');
-const regPasswordInput = document.getElementById('regPassword');
-const forgotIdInput = document.getElementById('forgotId');
-const loginError = document.getElementById('loginError');
-const registerError = document.getElementById('registerError');
-const forgotError = document.getElementById('forgotError');
-const toast = document.getElementById('toast');
+const authButtons = document.getElementById("authButtons");
+const accountMenu = document.getElementById("accountMenu");
+const accountUsername = document.getElementById("accountUsername");
+const logoutBtn = document.getElementById("logoutBtn");
+const authModal = document.getElementById("authModal");
+const closeAuthModal = document.getElementById("closeAuthModal");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+const otpVerificationForm = document.getElementById("otpVerificationForm");
+
+// Input fields
+const loginUsernameInput = document.getElementById("loginUsername");
+const loginPasswordInput = document.getElementById("loginPassword");
+const regUsernameInput = document.getElementById("regUsername");
+const regNameInput = document.getElementById("regName");
+const regEmailInput = document.getElementById("regEmail");
+const regPhoneInput = document.getElementById("regPhone");
+const regPasswordInput = document.getElementById("regPassword");
+const forgotIdInput = document.getElementById("forgotId");
+const otpInput = document.getElementById("otpInput");
+
+// Messages/Errors
+const loginError = document.getElementById("loginError");
+const registerError = document.getElementById("registerError");
+const forgotError = document.getElementById("forgotError");
+const otpMessage = document.getElementById("otpMessage");
+const otpError = document.getElementById("otpError");
+const toast = document.getElementById("toast");
 
 // Buttons to switch forms
-const showRegisterFromLogin = document.getElementById('showRegisterFromLogin');
-const showLoginFromRegister = document.getElementById('showLoginFromRegister');
-const showForgotFromLogin = document.getElementById('showForgotFromLogin');
-const showLoginFromForgot = document.getElementById('showLoginFromForgot');
-const showVerifyOtpFromLogin = document.getElementById('showVerifyOtpFromLogin'); // Added this if you want a direct link to OTP form
-const showLoginFromOtp = document.getElementById('showLoginFromOtp');
+const showRegisterFromLogin = document.getElementById("showRegisterFromLogin");
+const showLoginFromRegister = document.getElementById("showLoginFromRegister");
+const showForgotFromLogin = document.getElementById("showForgotFromLogin");
+const showLoginFromForgot = document.getElementById("showLoginFromForgot");
+const showLoginFromOtp = document.getElementById("showLoginFromOtp");
 
-// New OTP related DOM elements
-const otpVerificationForm = document.getElementById('otpVerificationForm');
-const otpInput = document.getElementById('otpInput');
-const otpMessage = document.getElementById('otpMessage');
-const otpError = document.getElementById('otpError');
-// let btnVerifyOtp = document.getElementById('btnVerifyOtp');
-const btnResendOtp = document.getElementById('btnResendOtp');
-const showLoginFromOtpLink = document.getElementById('showLoginFromOtp');
+// Buttons for form submission
+const btnLoginSubmit = document.getElementById("btnLoginSubmit");
+const btnRegisterSubmit = document.getElementById("btnRegisterSubmit");
+const btnResetPassword = document.getElementById("btnResetPassword");
+const btnVerifyOtp = document.getElementById("btnVerifyOtp");
+const btnResendOtp = document.getElementById("btnResendOtp");
 
-// Temporary storage for user registration/reset data during OTP flow
-let tempUserData = null;
-let currentOtp = null; // This will now be set to a fixed value for simulation
-let otpPurpose = null; // 'register' or 'reset'
-let currentOtpUserIdentifier = null; // Menyimpan email/phone tujuan OTP
+// Temporary storage for user identifier during OTP flow
+let currentOtpUserIdentifier = null;
 
 // Product Detail Modal DOM elements
-const productDetailModal = document.getElementById('productDetailModal');
-const closeDetailModal = document.getElementById('closeDetailModal');
-const modalProductImage = document.getElementById('modalProductImage');
-const modalProductName = document.getElementById('modalProductName');
-const modalProductDescription = document.getElementById('modalProductDescription');
-const modalProductPrice = document.getElementById('modalProductPrice');
-const modalProductStock = document.getElementById('modalProductStock');
-const modalAddToCartBtn = document.getElementById('modalAddToCartBtn');
+const productDetailModal = document.getElementById("productDetailModal");
+const closeDetailModal = document.getElementById("closeDetailModal");
+const modalProductImage = document.getElementById("modalProductImage");
+const modalProductName = document.getElementById("modalProductName");
+const modalProductDescription = document.getElementById("modalProductDescription");
+const modalProductPrice = document.getElementById("modalProductPrice");
+const modalProductStock = document.getElementById("modalProductStock");
+const modalAddToCartBtn = document.getElementById("modalAddToCartBtn");
 
-// Dashboard specific DOM elements
-const catalogContainer = document.getElementById('catalog');
-const categoryFilter = document.getElementById('categoryFilter');
-const searchInput = document.getElementById('searchInput');
-const accountDropdown = document.getElementById('accountDropdown');
+// Dashboard specific DOM elements (hanya akan ada di dashboard.html)
+const catalogContainer = document.getElementById("catalog");
+const categoryFilter = document.getElementById("categoryFilter");
+const searchInput = document.getElementById("searchInput");
+
 
 // --- Global Utility Functions ---
 
@@ -170,895 +178,690 @@ const accountDropdown = document.getElementById('accountDropdown');
  * @param {string} message - The message to display.
  * @param {string} type - 'success', 'error', or 'info'.
  */
-window.showToast = function(message, type = 'info') {
-    if (!toast) return; // Ensure toast element exists
+window.showToast = function (message, type = "info") {
+    if (!toast) return;
     toast.textContent = message;
-    toast.className = 'toast show ' + type;
+    toast.className = "toast show " + type;
     setTimeout(() => {
-        toast.className = toast.className.replace('show', '');
+        toast.className = toast.className.replace("show", "");
     }, 3000);
 };
 
 /**
- * Loads the current user from Local Storage.
- * @returns {object|null} The current user object or null if not logged in.
+ * Retrieves the CSRF token from cookies.
+ * @returns {string} The CSRF token.
  */
-window.loadUserFromLocalStorage = function() {
-    const user = localStorage.getItem('currentUser');
-    return user ? JSON.parse(user) : null;
-};
-
-/**
- * Saves the current user to Local Storage.
- * @param {object|null} user - The user object to save, or null to clear.
- */
-window.saveUserToLocalStorage = function(user) {
-    if (user) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-    } else {
-        localStorage.removeItem('currentUser');
+window.getCsrfToken = function () {
+    const name = "csrftoken";
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split("=");
+        if (key === name) return value;
     }
+    return "";
 };
-
-/**
- * Updates the authentication UI based on current user status.
- */
-window.updateAuthUI = function() {
-    const currentUser = window.loadUserFromLocalStorage();
-    if (authButtons && accountMenu && accountUsername) {
-        if (currentUser) {
-            authButtons.style.display = 'none';
-            accountMenu.style.display = 'flex';
-            accountUsername.textContent = currentUser.username; // Or currentUser.name
-            updateAddToCartButtonsVisibility(true); // Show add to cart buttons
-        } else {
-            authButtons.style.display = 'flex';
-            accountMenu.style.display = 'none';
-            accountUsername.textContent = '';
-            updateAddToCartButtonsVisibility(false); // Hide add to cart buttons
-        }
-    }
-};
-
-function updateAddToCartButtonsVisibility(isLoggedIn) {
-    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.style.display = isLoggedIn ? 'block' : 'none';
-    });
-    if (modalAddToCartBtn) {
-        modalAddToCartBtn.style.display = isLoggedIn ? 'block' : 'none';
-    }
-}
 
 /**
  * Shows a specific authentication form (login, register, forgot password, otp verification) in the modal.
  * @param {string} formName - 'login', 'register', 'forgot', or 'otp'.
  */
-window.showForm = function(formName) {
-    console.log(formName)
-    if (loginForm) loginForm.style.display = 'none';
-    if (registerForm) registerForm.style.display = 'none';
-    if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
-    if (otpVerificationForm) otpVerificationForm.style.display = 'none';
-    
-    // Clear all error/info messages
-    if (loginError) loginError.textContent = '';
-    if (registerError) registerError.textContent = '';
-    if (forgotError) forgotError.textContent = '';
-    if (otpMessage) otpMessage.textContent = '';
-    if (otpError) otpError.textContent = '';
+window.showForm = function (formName) {
+    if (loginForm) loginForm.style.display = "none";
+    if (registerForm) registerForm.style.display = "none";
+    if (forgotPasswordForm) forgotPasswordForm.style.display = "none";
+    if (otpVerificationForm) otpVerificationForm.style.display = "none";
 
-    if (formName === 'login' && loginForm) {
-        loginForm.style.display = 'block';
-    } else if (formName === 'register' && registerForm) {
-        registerForm.style.display = 'block';
-    } else if (formName === 'forgot' && forgotPasswordForm) {
-        forgotPasswordForm.style.display = 'block';
-    } else if (formName === 'otp' && otpVerificationForm) {
-        otpVerificationForm.style.display = 'block';
+    // Clear all error/info messages
+    if (loginError) loginError.textContent = "";
+    if (registerError) registerError.textContent = "";
+    if (forgotError) forgotError.textContent = "";
+    if (otpMessage) otpMessage.textContent = "";
+    if (otpError) otpError.textContent = "";
+
+    if (formName === "login" && loginForm) {
+        loginForm.style.display = "block";
+    } else if (formName === "register" && registerForm) {
+        registerForm.style.display = "block";
+    } else if (formName === "forgot" && forgotPasswordForm) {
+        forgotPasswordForm.style.display = "block";
+    } else if (formName === "otp" && otpVerificationForm) {
+        otpVerificationForm.style.display = "block";
     }
 };
 
 /**
  * Shows the login modal.
  */
-window.showLoginModal = function() {
-    if (authModal) authModal.style.display = 'flex';
-    window.showForm('login');
+window.showLoginModal = function () {
+    if (authModal) authModal.style.display = "flex";
+    window.showForm("login");
 };
 
 /**
- * Shows the register modal.
+ * Updates UI elements related to login status.
+ * @param {boolean} isAuthenticated - True if user is authenticated, false otherwise.
+ * @param {object|null} userData - The user object if authenticated, null otherwise.
  */
-window.showRegisterModal = function() {
-    if (authModal) authModal.style.display = 'flex';
-    window.showForm('register');
-};
+function updateLoginUI(isAuthenticated, userData = null) {
+    if (authButtons) {
+        authButtons.style.display = isAuthenticated ? "none" : "flex";
+    }
+    if (accountMenu) {
+        accountMenu.style.display = isAuthenticated ? "flex" : "none";
+    }
+    if (accountUsername) {
+        accountUsername.textContent = userData ? userData.username || userData.name || "Pengguna" : "";
+    }
+    updateAddToCartButtonsVisibility(isAuthenticated);
+}
 
 /**
- * Shows the forgot password modal.
+ * Checks login status with the backend and updates the UI.
+ * This is the primary way to determine user's login state.
  */
-window.showForgotPasswordModal = function() {
-    if (authModal) authModal.style.display = 'flex';
-    window.showForm('forgot');
-};
-
-/**
- * Handles user logout.
- */
-window.logout = function() {
-    window.saveUserToLocalStorage(null); // Clear current user
-    window.updateAuthUI(); // Update UI
-    window.showToast('Anda telah logout.', 'info');
-};
-
-/**
- * Handles user login.
- */
-window.login = function() {
-    const username = loginUsernameInput.value || '';
-    const password = loginPasswordInput.value || '';
-
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    const foundUser = users.find(u =>
-        (u.username === username || u.email === username || u.phone === username) && u.password === password
-    );
-
-    if (foundUser) {
-        window.saveUserToLocalStorage(foundUser);
-        window.updateAuthUI();
-        if (authModal) authModal.style.display = 'none';
-        window.showToast('Login berhasil!', 'success');
-        renderProducts(products); // Refresh products to show/hide add to cart buttons
-    } else {
-        if (loginError) loginError.textContent = 'ID atau kata sandi salah.';
-        window.showToast('Login gagal!', 'error');
-    }
-};
-
-/**
- * Handles user registration - now initiates OTP flow.
- */
-window.register = function() {
-    const username = regUsernameInput.value.trim();
-    const name = regNameInput.value.trim();
-    const email = regEmailInput.value.trim();
-    const phone = regPhoneInput.value.trim();
-    const password = regPasswordInput.value.trim();
-
-    if (!username || !name || !email || !phone || !password) {
-        if (registerError) registerError.textContent = 'Semua field harus diisi.';
-        window.showToast('Pendaftaran gagal!', 'error');
-        return;
-    }
-
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-
-    if (users.some(u => u.username === username)) {
-        registerError.textContent = 'Username sudah digunakan.';
-        return;
-    }
-    if (users.some(u => u.email === email)) {
-        registerError.textContent = 'Email sudah digunakan.';
-        return;
-    }
-    if (users.some(u => u.phone === phone)) {
-        registerError.textContent = 'Nomor telepon sudah digunakan.';
-        return;
-    }
-
-    registerError.textContent = '';
-
-    // Simpan data sementara
-    tempUserData = { username, name, email, phone, password, address: '' };
-    otpPurpose = 'register';
-    currentOtpUserIdentifier = email;
-
-    // Kirim OTP via backend (Django)
-    sendOtp(email);
-    // const otpSent = await sendOtp(email);
-    // if (otpSent) {
-    //     window.showToast('OTP telah dikirim. Mohon verifikasi.', 'info');
-    //     window.showForm('otp'); // Tampilkan form OTP hanya jika sukses
-    // } else {
-    //     window.showToast('Gagal mengirim OTP.', 'error');
-    // }
-};
-
-/**
- * Handles forgot password request - now initiates OTP flow.
- */
-window.resetPassword = function() {
-    const id = forgotIdInput.value.trim();
-    if (!id) {
-        if (forgotError) forgotError.textContent = 'Masukkan Username / Email / No. Telepon Anda.';
-        return;
-    }
-
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    const foundUser = users.find(u => u.username === id || u.email === id || u.phone === id);
-
-    if (foundUser) {
-        tempUserData = foundUser; // Store the found user for later password update
-        otpPurpose = 'reset';
-        currentOtpUserIdentifier = foundUser.email; // Simpan identifier untuk resend OTP
-        sendOtp(foundUser.email); // Simulate sending OTP to user's registered email
-
-        window.showToast('Instruksi reset kata sandi telah dikirim. Mohon verifikasi.', 'info');
-        window.showForm('otp'); // Show OTP verification form
-        forgotIdInput.value = '';
-    } else {
-        if (forgotError) forgotError.textContent = 'Akun tidak ditemukan.';
-        window.showToast('Reset kata sandi gagal!', 'error');
-    }
-};
-
-/**
- * Simulates sending an OTP. In a real application, this would be an API call to your backend.
- * The backend would generate a secure OTP, send it via email/SMS, and store it for verification.
- * @param {string} destination - The email or phone number to send the OTP to.
- */
-
-// function sendOtp(destination) {
-//     // Clear previous OTP messages and errors before sending new one
-//     if (otpMessage) otpMessage.textContent = '';
-//     if (otpError) otpError.textContent = '';
-
-//     // For simulation: Use a fixed 6-digit OTP for easy testing.
-//     currentOtp = '123456'; // FIXED DUMMY OTP
-
-//     // Display a message that OTP has been sent (even if dummy)
-//     if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${destination}. Silakan cek email Anda. (Dummy OTP: ${currentOtp})`;
-//     window.showToast(`OTP baru telah dikirim ke ${destination}.`, 'success');
-//     console.log(`Simulated OTP for ${destination}: ${currentOtp}`); // FOR TESTING ONLY! NEVER DO THIS IN PRODUCTION!
-// }
-
-async function checkLoginStatus() {
+window.checkLoginStatus = async function () {
     try {
-        const response = await fetch('/api/current_user/', {
-            method: 'GET',
-            credentials: 'include'  // penting agar cookie session dikirim
+        const response = await fetch("/api/get_current_user/", {
+            method: "GET",
+            credentials: "include", // Essential for sending session cookies
         });
         const data = await response.json();
 
         if (data.is_authenticated) {
-            document.getElementById('authButtons').style.display = 'none';
-            document.getElementById('accountMenu').style.display = 'block';
-            document.getElementById('accountUsername').textContent = data.username;
+            updateLoginUI(true, data); // Pass entire user data
         } else {
-            document.getElementById('authButtons').style.display = 'flex';
-            document.getElementById('accountMenu').style.display = 'none';
+            updateLoginUI(false);
+        }
+        
+        // Trigger re-render of cart, profile, and order history if functions exist
+        // These checks prevent errors if scripts are not loaded on a particular page
+        if (typeof window.renderCart === 'function') {
+            window.renderCart();
+        }
+        if (typeof window.loadUserProfile === 'function') {
+            window.loadUserProfile();
+        }
+        if (typeof window.loadOrderHistory === 'function') {
+            window.loadOrderHistory();
+        }
+
+    } catch (error) {
+        console.error("Error checking login status:", error);
+        window.showToast("Gagal memeriksa status login.", "error");
+        updateLoginUI(false); // Assume logged out on error
+    }
+};
+
+/**
+ * Sends OTP to the provided identifier (email/username).
+ * @param {string} emailOrUsername - The user's email or username.
+ */
+async function sendOtpToBackend(emailOrUsername) {
+    currentOtpUserIdentifier = emailOrUsername;
+
+    try {
+        const response = await fetch("/api/send_otp/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": window.getCsrfToken(),
+            },
+            body: JSON.stringify({ email_or_username: emailOrUsername }),
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+            window.showToast(result.message || "OTP berhasil dikirim.", "success");
+            window.showForm("otp");
+            if (otpMessage) otpMessage.textContent = `OTP telah dikirim ke ${emailOrUsername}. Silakan cek.`;
+        } else {
+            window.showToast(result.message || "Gagal mengirim OTP.", "error");
+            if (otpError) otpError.textContent = result.message || "Gagal mengirim OTP.";
         }
     } catch (error) {
-        console.error('Error checking login status:', error);
+        console.error("Error sending OTP:", error);
+        window.showToast("Terjadi kesalahan saat mengirim OTP.", "error");
     }
-}
-
-async function sendOtp(emailOrUsername) {
-  currentOtpUserIdentifier = emailOrUsername; // ✅ store it globally before anything
-
-  const response = await fetch('/api/send-otp/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email_or_username: emailOrUsername })
-  });
-
-  const result = await response.json();
-  if (result.success) {
-    window.showToast(result.message || 'OTP berhasil dikirim.', 'success');
-    window.showForm('otp'); // ✅ Show OTP form here
-  } else {
-    window.showToast(result.message || 'Gagal mengirim OTP.', 'error');
-  }
 }
 
 /**
- * Verifies the entered OTP.
+ * Verifies the entered OTP with the backend.
  */
-window.verifyOtp = async function () {
-    const otpInput = document.getElementById('otp-input');
-    const otpError = document.getElementById('otp-error');
-    const identifierInput = document.getElementById('otp-identifier'); // input hidden or visible with email/username
-
+async function verifyOtpWithBackend() {
     const enteredOtp = otpInput?.value.trim();
-    const identifier = identifierInput?.value.trim();
+    const userIdentifier = currentOtpUserIdentifier;
 
-    if (otpError) otpError.textContent = '';
+    if (otpError) otpError.textContent = "";
 
-    if (!enteredOtp) {
-        otpError.textContent = 'Mohon masukkan OTP.';
-        return;
-    }
-
-    if (!identifier) {
-        otpError.textContent = 'Identitas pengguna tidak ditemukan.';
+    if (!enteredOtp || !userIdentifier) {
+        if (otpError) otpError.textContent = "Mohon masukkan OTP dan identitas pengguna.";
         return;
     }
 
     try {
-        const response = await fetch('/verify-otp/', {
-            method: 'POST',
+        const response = await fetch("/api/verify_otp/", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()  // Required if CSRF is enforced
+                "Content-Type": "application/json",
+                "X-CSRFToken": window.getCsrfToken(),
             },
             body: JSON.stringify({
-                email_or_username: identifier,
-                otp_code: enteredOtp
-            })
+                email_or_username: userIdentifier,
+                otp_code: enteredOtp,
+            }),
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (response.ok && result.success) {
-            window.showToast(result.message, 'success');
-            window.location.href = '/login/';  // Redirect after successful verification
+        if (response.ok && data.success) {
+            window.showToast(data.message, "success");
+            if (authModal) authModal.style.display = "none";
+            window.showForm("login"); // Assume successful verification means user can now log in
+            otpInput.value = "";
+            currentOtpUserIdentifier = null;
+            await window.checkLoginStatus(); // Re-check login status
         } else {
-            otpError.textContent = result.message || 'OTP tidak valid.';
+            if (otpError) otpError.textContent = data.message || "OTP tidak valid.";
+            window.showToast(data.message || "Verifikasi OTP gagal.", "error");
         }
     } catch (err) {
-        otpError.textContent = 'Terjadi kesalahan. Coba lagi.';
-        console.error(err);
+        console.error("OTP verification error:", err);
+        if (otpError) otpError.textContent = "Terjadi kesalahan. Coba lagi.";
+        window.showToast("Terjadi kesalahan saat memverifikasi OTP.", "error");
     }
-};
+}
 
-// Fungsi mengambil CSRF token (hanya jika tidak pakai @csrf_exempt)
-function getCsrfToken() {
-    const name = 'csrftoken';
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === name) return value;
+/**
+ * Updates visibility of "Add to Cart" buttons based on login status.
+ * This needs to query the *actual* login status, not just rely on local storage.
+ */
+async function updateAddToCartButtonsVisibility(isLoggedIn) {
+    document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+        btn.style.display = isLoggedIn ? "block" : "none";
+    });
+    if (modalAddToCartBtn) {
+        modalAddToCartBtn.style.display = isLoggedIn ? "block" : "none";
     }
-    return '';
 }
 
 
-//     otpError.textContent = ''; // Clear previous error
-
-//     try {
-//         const response = await fetch('/api/verify_otp/', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//                 email_or_username: currentOtpUserIdentifier,
-//                 otp_code: enteredOtp
-//             })
-//         });
-
-//         const result = await response.json();
-
-//         if (result.success) {
-//             if (otpPurpose === 'register') {
-//                 window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
-//                 window.showForm('login');
-
-//                 // Clear registration form fields
-//                 regUsernameInput.value = '';
-//                 regNameInput.value = '';
-//                 regEmailInput.value = '';
-//                 regPhoneInput.value = '';
-//                 regPasswordInput.value = '';
-//             } else if (otpPurpose === 'reset') {
-//                 window.showToast('OTP valid. Silakan lanjutkan reset password.', 'success');
-//                 window.showForm('resetPassword'); // or wherever you want to send the user
-//             }
-
-//             // Clear OTP-related temporary data
-//             tempUserData = null;
-//             currentOtp = null;
-//             otpPurpose = null;
-//             currentOtpUserIdentifier = null;
-//             otpInput.value = '';
-//             if (authModal) authModal.style.display = 'none';
-//         } else {
-//             if (otpError) otpError.textContent = result.message || 'OTP salah.';
-//             window.showToast(result.message || 'Verifikasi OTP gagal.', 'error');
-//         }
-//     } catch (error) {
-//         console.error('Error verifying OTP:', error);
-//         if (otpError) otpError.textContent = 'Terjadi kesalahan saat memverifikasi OTP.';
-//         window.showToast('Kesalahan sistem saat verifikasi.', 'error');
-//     }
-// };
-
-/**
- * Handles resending the OTP.
- */
-window.sendOtp = function() {
-    if (!currentOtpUserIdentifier) {
-        if (otpError) otpError.textContent = 'Tidak ada tujuan OTP yang tersimpan. Silakan kembali ke form sebelumnya.';
-        window.showToast('Gagal mengirim ulang OTP. Data tujuan tidak ditemukan.', 'error');
-        return;
-    }
-    sendOtp(currentOtpUserIdentifier);
-};
-
-
-// --- Product Catalog and Detail Functions ---
+// --- Product Catalog and Detail Functions (Dashboard Specific) ---
 
 /**
  * Renders products into the catalog container.
  * @param {Array<object>} filteredProducts - Products to render.
  */
-function renderProducts(filteredProducts) {
-    if (!catalogContainer) return;
+async function renderProducts(filteredProducts) {
+    if (!catalogContainer) return; // Only execute if on dashboard page
 
-    catalogContainer.innerHTML = '';
+    catalogContainer.innerHTML = "";
     if (filteredProducts.length === 0) {
-        catalogContainer.innerHTML = '<p style="text-align: center; color: #6c757d; font-size: 1.1em; padding: 50px;">Tidak ada produk yang ditemukan.</p>';
+        catalogContainer.innerHTML =
+            '<p style="text-align: center; color: #6c757d; font-size: 1.1em; padding: 50px;">Tidak ada produk yang ditemukan.</p>';
         return;
     }
 
-    const currentUser = window.loadUserFromLocalStorage();
+    // Get current login status dynamically for button visibility
+    const response = await fetch("/api/get_current_user/", { method: "GET", credentials: "include" });
+    const userData = await response.json();
+    const isLoggedIn = userData.is_authenticated;
 
-    filteredProducts.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
+    filteredProducts.forEach((product) => {
+        const productCard = document.createElement("div");
+        productCard.className = "product-card";
 
-        const truncatedDescription = product.description.length > 70
-            ? product.description.substring(0, 70) + '...'
-            : product.description;
+        const truncatedDescription =
+            product.description.length > 70
+                ? product.description.substring(0, 70) + "..."
+                : product.description;
 
         productCard.innerHTML = `
             <img src="${product.image}" alt="${product.name}" />
             <h4>${product.name}</h4>
-            <p class="product-price">Rp ${product.price.toLocaleString('id-ID')}</p>
+            <p class="product-price">Rp ${product.price.toLocaleString("id-ID")}</p>
             <p>${truncatedDescription}</p>
-            <button class="btn btn-primary add-to-cart-btn" data-id="${product.id}" ${currentUser ? '' : 'style="display: none;"'}>+ Keranjang</button>
+            <button class="btn btn-primary add-to-cart-btn" data-id="${product.id}" style="display: ${isLoggedIn ? 'block' : 'none'};">+ Keranjang</button>
         `;
         catalogContainer.appendChild(productCard);
 
-        const elementsToClickForDetail = productCard.querySelectorAll('img, h4, p:not(.product-price), .product-badge');
-        elementsToClickForDetail.forEach(el => {
-            el.addEventListener('click', () => showProductDetail(product.id));
+        const elementsToClickForDetail = productCard.querySelectorAll(
+            "img, h4, p:not(.product-price), .product-badge"
+        );
+        elementsToClickForDetail.forEach((el) => {
+            el.addEventListener("click", () => showProductDetail(product.id));
         });
 
-        const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+        const addToCartBtn = productCard.querySelector(".add-to-cart-btn");
         if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent product detail modal from opening
-                addToCartBtn(parseInt(e.target.dataset.id));
+            addToCartBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                window.addToCart(parseInt(e.target.dataset.id));
             });
         }
     });
 }
-
-// Helper function to show/hide forms
-    function showForm(formToShow) {
-        console.log('tes')
-        document.querySelectorAll('.auth-form').forEach(form => {
-            form.style.display = 'none';
-        });
-        formToShow.style.display = 'block';
-        // Clear previous messages
-        loginError.textContent = '';
-        registerError.textContent = '';
-        forgotError.textContent = '';
-        otpError.textContent = '';
-        otpMessage.textContent = '';
-    }
 
 /**
  * Shows the product detail modal.
  * @param {number} productId - The ID of the product to display.
  */
-function showProductDetail(productId) {
-    const product = products.find(p => p.id === productId);
+async function showProductDetail(productId) {
+    const product = products.find((p) => p.id === productId);
     if (!product || !productDetailModal) return;
 
     modalProductImage.src = product.image;
     modalProductName.textContent = product.name;
     modalProductDescription.textContent = product.description;
-    modalProductPrice.textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
-    modalProductStock.textContent = product.stock !== undefined ? product.stock : 'N/A'; // Assuming stock can be undefined
-    modalAddToCartBtn.dataset.productId = product.id; // Set ID for add to cart button
+    modalProductPrice.textContent = `Rp ${product.price.toLocaleString("id-ID")}`;
+    modalProductStock.textContent =
+        product.stock !== undefined ? product.stock : "N/A";
+    modalAddToCartBtn.dataset.productId = product.id;
 
-    const currentUser = window.loadUserFromLocalStorage();
-    modalAddToCartBtn.style.display = currentUser ? 'block' : 'none'; // Show/hide button based on login
+    // Check login status for modal button visibility
+    const response = await fetch("/api/get_current_user/", { method: "GET", credentials: "include" });
+    const userData = await response.json();
+    modalAddToCartBtn.style.display = userData.is_authenticated ? "block" : "none";
 
-    productDetailModal.style.display = 'flex'; // Use 'flex' for centering with CSS
+    productDetailModal.style.display = "flex";
 }
 
 // Close product detail modal
 if (closeDetailModal) {
-    closeDetailModal.addEventListener('click', () => {
-        if (productDetailModal) productDetailModal.style.display = 'none';
+    closeDetailModal.addEventListener("click", () => {
+        if (productDetailModal) productDetailModal.style.display = "none";
     });
 }
 
 // Add to cart from modal
 if (modalAddToCartBtn) {
-    modalAddToCartBtn.addEventListener('click', (event) => {
+    modalAddToCartBtn.addEventListener("click", async (event) => {
         const productId = parseInt(event.target.dataset.productId);
-        addToCart(productId);
-        if (productDetailModal) productDetailModal.style.display = 'none'; // Close modal after adding
+        await window.addToCart(productId);
+        if (productDetailModal) productDetailModal.style.display = "none";
     });
 }
 
- // Initial form display (e.g., show login by default)
-    if (loginForm) showForm(loginForm); // Make sure to show a form when the page loads
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    checkLoginStatus(); // panggil ini di awal halaman
-// --- Login Logic ---
-    const btnLoginSubmit = document.getElementById('btnLoginSubmit');
-    if (btnLoginSubmit) {
-        btnLoginSubmit.addEventListener('click', async (e) => {
-            e.preventDefault();
-            // const usernameInput = document.getElementById('loginUsername');
-            // const passwordInput = document.getElementById('loginPassword');
-
-            const username = loginUsernameInput.value ? loginUsernameInput.value : '';
-            const password = loginPasswordInput.value ? loginPasswordInput.value : '';
-
-            try {
-                const response = await fetch('/api/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include', // <--- penting
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    loginError.textContent = '';
-                    alert(data.message); // Or display a success message
-                    window.location.href = '/'; // Redirect to dashboard or home
-                } else {
-                    loginError.textContent = data.message;
-                    if (data.message.includes('Account not activated')) {
-                        // If account not activated, show OTP form and pre-fill email/username
-                        otpMessage.textContent = 'Account not active. Please verify your email with OTP.';
-                        document.getElementById('otpInput').setAttribute('data-user-identifier', username); // Store username for OTP verification
-                        showForm(otpVerificationForm);
-                    }
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                loginError.textContent = 'An error occurred during login.';
-            }
-        });
-    }
-
-    const btnRegisterSubmit = document.getElementById('btnRegisterSubmit');
-     // --- Registration Logic ---
-    if (btnRegisterSubmit) {
-        btnRegisterSubmit.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const regUsernameInput = document.getElementById('regUsername');
-            const regEmailInput = document.getElementById('regEmail');
-            const regPasswordInput = document.getElementById('regPassword');
-            const regNameInput = document.getElementById('regName');
-            const regPhoneInput = document.getElementById('regPhone');
-
-            const username = regUsernameInput?.value.trim();
-            const email = regEmailInput?.value.trim();
-            const password = regPasswordInput?.value;
-            const phone = regPhoneInput?.value.trim();
-            const name = regNameInput?.value.trim();
-
-            try {
-                console.log('Sending:', { username, email, password, phone, name });
-                const response = await fetch('/api/register/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, email, password, phone, name })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    registerError.textContent = '';
-                    alert(data.message);
-                    otpMessage.textContent = data.message;
-                    document.getElementById('otpInput').setAttribute('data-user-identifier', email);
-                    showForm('otp');
-                } else {
-                    registerError.textContent = data.message;
-                }
-            } catch (error) {
-                console.error('Registration error:', error);
-                registerError.textContent = 'An error occurred during registration.';
-            }
-        });
-    }
-
-     // --- Forgot Password / Send OTP Logic ---
-    const btnResetPassword = document.getElementById('btnResetPassword');
-    if (btnResetPassword) {
-        btnResetPassword.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const forgotIdInput = document.getElementById('forgotId');
-            const emailOrUsername = forgotIdInput ? forgotIdInput.value : '';
-
-            try {
-                const response = await fetch('/api/send_otp/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // 'X-CSRFToken': getCookie('csrftoken'), // Add this in production
-                    },
-                    body: JSON.stringify({ email_or_username: emailOrUsername })
-                });
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    forgotError.textContent = '';
-                    otpMessage.textContent = data.message;
-                    document.getElementById('otpInput').setAttribute('data-user-identifier', emailOrUsername); // Store for verification
-                    showForm('otp');
-                } else {
-                    forgotError.textContent = data.message;
-                }
-            } catch (error) {
-                console.error('Send OTP error:', error);
-                forgotError.textContent = 'An error occurred while sending OTP.';
-            }
-        });
-    }
-
-    // --- OTP Verification Logic ---
-    const btnVerifyOtp = document.getElementById('btnVerifyOtp');
-    if (btnVerifyOtp) {
-        btnVerifyOtp.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const otpInput = document.getElementById('otpInput');
-            const otpCode = otpInput ? otpInput.value.trim() : '';
-            const userIdentifier = currentOtpUserIdentifier; // ✅ Gunakan variabel global
-
-            if (!otpCode || !userIdentifier) {
-                otpError.textContent = 'OTP dan identitas pengguna diperlukan.';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/verify_otp/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email_or_username: userIdentifier,
-                        otp_code: otpCode
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    otpError.textContent = '';
-                    alert(data.message);
-                    showForm('login'); // ✅ Ganti ke 'login' string, sesuai showForm yang kamu punya
-                } else {
-                    otpError.textContent = data.message || 'Verifikasi gagal.';
-                }
-            } catch (error) {
-                console.error('OTP verification error:', error);
-                otpError.textContent = 'Terjadi kesalahan saat memverifikasi OTP.';
-            }
-        });
-    }
-});
-
-    async function checkLoginStatus() {
-        try {
-            const response = await fetch('/api/get_current_user/', {
-                method: 'GET',
-                credentials: 'include'  // <-- penting agar kirim cookie
-            });
-            const data = await response.json();
-
-            if (data.is_authenticated) {
-                // Tampilkan menu akun
-                document.getElementById('authButtons').style.display = 'none';
-                document.getElementById('accountMenu').style.display = 'block';
-                document.getElementById('accountUsername').textContent = data.username;
-            } else {
-                // Tampilkan tombol login
-                document.getElementById('authButtons').style.display = 'block';
-                document.getElementById('accountMenu').style.display = 'none';
-            }
-        } catch (error) {
-            console.error('Failed to check login status', error);
-        }
-    }
-    // CSRF token retrieval for production (add this function)
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // ... (rest of your existing dashboard.js functions) ...
 // --- Cart Management Functions (Globalized for use across pages) ---
+// Note: Cart items themselves are still in LocalStorage as per previous design.
+// If you want cart to also be in DB, that requires significant backend work.
+// This example keeps cart in LocalStorage for simplicity on frontend,
+// but ensures login status check before allowing cart operations.
 
 /**
- * Adds a product to the user's cart.
+ * Adds a product to the user's cart in LocalStorage.
+ * Requires user to be logged in.
  * @param {number} productId - The ID of the product to add.
  */
-window.addToCart = function(productId) {
-    const currentUser = window.loadUserFromLocalStorage();
-    if (!currentUser) {
-        window.showToast('Silakan login untuk menambahkan produk ke keranjang.', 'error');
+window.addToCart = async function (productId) {
+    const response = await fetch("/api/get_current_user/", { method: "GET", credentials: "include" });
+    const userData = await response.json();
+
+    if (!userData.is_authenticated) {
+        window.showToast(
+            "Silakan login untuk menambahkan produk ke keranjang.",
+            "error"
+        );
         window.showLoginModal();
         return;
     }
 
-    const product = products.find(p => p.id === productId);
+    const product = products.find((p) => p.id === productId);
     if (!product) {
-        window.showToast('Produk tidak ditemukan.', 'error');
+        window.showToast("Produk tidak ditemukan.", "error");
         return;
     }
 
-    const cartKey = `cart_${currentUser.username}`;
+    // Use the actual username from the backend response for the cart key
+    const username = userData.username;
+    const cartKey = `cart_${username}`;
     let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-    const existingCartItem = cart.find(item => item.id === productId);
+    const existingCartItem = cart.find((item) => item.id === productId);
 
-    // Assuming a 'stock' property in your products array for this logic
-    const productStock = product.stock !== undefined ? product.stock : 1000; // Default large stock if not specified
+    const productStock = product.stock !== undefined ? product.stock : 1000;
 
     if (existingCartItem) {
         if (existingCartItem.quantity < productStock) {
             existingCartItem.quantity++;
-            window.showToast(`Menambahkan ${product.name} ke keranjang.`, 'success');
+            window.showToast(`Menambahkan ${product.name} ke keranjang.`, "success");
         } else {
-            window.showToast(`Stok ${product.name} terbatas.`, 'error');
+            window.showToast(`Stok ${product.name} terbatas.`, "error");
         }
     } else {
         if (productStock > 0) {
             cart.push({ ...product, quantity: 1 });
-            window.showToast(`${product.name} ditambahkan ke keranjang.`, 'success');
+            window.showToast(`${product.name} ditambahkan ke keranjang.`, "success");
         } else {
-            window.showToast(`${product.name} sedang tidak tersedia.`, 'error');
+            window.showToast(`${product.name} sedang tidak tersedia.`, "error");
         }
     }
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    // Optionally, update a cart count icon in the header if you have one
+    
+    // Optionally, trigger a cart re-render if on the cart page
+    if (typeof window.renderCart === 'function') {
+        window.renderCart();
+    }
 };
+
+// Expose products globally for other scripts like cart.js
+window.products = products;
 
 
 // --- Event Listeners and Initializations ---
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initial load of user data and update UI
-    window.updateAuthUI();
+document.addEventListener("DOMContentLoaded", function () {
+    // Initial check of login status from backend and update UI
+    window.checkLoginStatus();
+
+    // Show login form by default when modal is opened
+    window.showForm("login");
 
     // Event listeners for auth buttons in header
-    const btnLoginHeader = document.getElementById('btnLogin');
-    const btnRegisterHeader = document.getElementById('btnRegister');
-    if (btnLoginHeader) btnLoginHeader.addEventListener('click', window.showLoginModal);
-    if (btnRegisterHeader) btnRegisterHeader.addEventListener('click', window.showRegisterModal);
+    const btnLoginHeader = document.getElementById("btnLogin");
+    const btnRegisterHeader = document.getElementById("btnRegister");
+    if (btnLoginHeader)
+        btnLoginHeader.addEventListener("click", window.showLoginModal);
+    if (btnRegisterHeader)
+        btnRegisterHeader.addEventListener("click", () => {
+            window.showLoginModal(); // Tetap panggil showLoginModal dulu
+            window.showForm("register"); // Lalu ganti ke form register
+        });
 
- // Event listeners for form switching
-    if (showRegisterFromLogin) showRegisterFromLogin.addEventListener('click', () => showForm(registerForm));
-    if (showLoginFromRegister) showLoginFromRegister.addEventListener('click', () => showForm(loginForm));
-    if (showForgotFromLogin) showForgotFromLogin.addEventListener('click', () => showForm(forgotPasswordForm));
-    if (showLoginFromForgot) showLoginFromForgot.addEventListener('click', () => showForm(loginForm));
-    if (showLoginFromOtp) showLoginFromOtp.addEventListener('click', () => showForm(loginForm));
+    // Event listeners for form switching within the modal
+    if (showRegisterFromLogin)
+        showRegisterFromLogin.addEventListener("click", (e) => { e.preventDefault(); window.showForm("register"); });
+    if (showLoginFromRegister)
+        showLoginFromRegister.addEventListener("click", (e) => { e.preventDefault(); window.showForm("login"); });
+    if (showForgotFromLogin)
+        showForgotFromLogin.addEventListener("click", (e) => { e.preventDefault(); window.showForm("forgot"); });
+    if (showLoginFromForgot)
+        showLoginFromForgot.addEventListener("click", (e) => { e.preventDefault(); window.showForm("login"); });
+    if (showLoginFromOtp)
+        showLoginFromOtp.addEventListener("click", (e) => { e.preventDefault(); window.showForm("login"); });
 
     // Event listener for account menu dropdown
+    const accountDropdown = document.getElementById("accountDropdown");
     if (accountMenu && accountDropdown) {
-        accountMenu.addEventListener('click', function(e) {
-            accountDropdown.style.display = accountDropdown.style.display === 'block' ? 'none' : 'block';
-            e.stopPropagation(); // Prevent document click from closing it immediately
+        accountMenu.addEventListener("click", function (e) {
+            accountDropdown.style.display =
+                accountDropdown.style.display === "block" ? "none" : "block";
+            e.stopPropagation();
         });
 
         // Close dropdown if clicked outside
-        document.addEventListener('click', function(e) {
-            if (!accountMenu.contains(e.target) && accountDropdown.style.display === 'block') {
-                accountDropdown.style.display = 'none';
+        document.addEventListener("click", function (e) {
+            if (
+                !accountMenu.contains(e.target) &&
+                accountDropdown.style.display === "block"
+            ) {
+                accountDropdown.style.display = "none";
             }
         });
     }
 
-    // Logout button
-    // if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
-    if (logoutBtn) logoutBtn.addEventListener('click', window.logout);
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-        try {
-            await fetch('/logout/', { method: 'GET', credentials: 'include' });
-            window.location.reload(); // reload page untuk update UI
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
-    });
+    // Logout button (Delegated to Django logout endpoint)
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                const response = await fetch("/api/logout/", {
+                    method: "POST", // Django logout is typically POST for security
+                    headers: {
+                        "X-CSRFToken": window.getCsrfToken(),
+                    },
+                    credentials: "include",
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    window.showToast(data.message || "Anda telah logout.", "info");
+                    
+                    // Clear all user-specific cart data from local storage on logout
+                    // This is important because the cart is still localStorage-based
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith("cart_")) {
+                            localStorage.removeItem(key);
+                        }
+                    }
 
-    // Close auth modal
-    if (closeAuthModal) {
-        closeAuthModal.addEventListener('click', () => {
-            if (authModal) authModal.style.display = 'none';
-            // Clear temporary OTP data when modal is closed manually
-            tempUserData = null;
-            currentOtp = null;
-            otpPurpose = null;
-            currentOtpUserIdentifier = null;
-            otpInput.value = '';
-            if (otpMessage) otpMessage.textContent = '';
-            if (otpError) otpError.textContent = '';
+                    await window.checkLoginStatus(); // Update UI based on logged-out state, and trigger other renders
+                    // Optionally redirect
+                    // window.location.href = "/"; // Redirect to home/dashboard
+                } else {
+                    window.showToast(data.message || "Gagal logout.", "error");
+                }
+            } catch (error) {
+                console.error("Logout error:", error);
+                window.showToast("Terjadi kesalahan saat logout.", "error");
+            }
         });
     }
 
-    // Auth form elements (assuming these IDs exist in dashboard.html)
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-    const otpVerificationForm = document.getElementById('otpVerificationForm');
 
-    // Auth form navigation
-    if (showRegisterLink) showRegisterLink.addEventListener('click', () => window.showForm('register'));
-    if (showLoginFromRegisterLink) showLoginFromRegisterLink.addEventListener('click', () => window.showForm('login'));
-    if (showForgotPasswordLink) showForgotPasswordLink.addEventListener('click', () => window.showForm('forgot'));
-    if (showLoginFromForgotLink) showLoginFromForgotLink.addEventListener('click', () => window.showForm('login'));
-    if (showLoginFromOtpLink) showLoginFromOtpLink.addEventListener('click', () => window.showForm('login'));
+    // Close auth modal
+    if (closeAuthModal) {
+        closeAuthModal.addEventListener("click", () => {
+            if (authModal) authModal.style.display = "none";
+            // Clear temporary OTP data when modal is closed manually
+            currentOtpUserIdentifier = null;
+            if (otpInput) otpInput.value = "";
+            if (otpMessage) otpMessage.textContent = "";
+            if (otpError) otpError.textContent = "";
+        });
+    }
 
     // Auth form submissions
-    if (btnLoginSubmit) btnLoginSubmit.addEventListener('click', window.login);
-    if (btnRegisterSubmit) btnRegisterSubmit.addEventListener('click', window.register);
-    if (btnResetPassword) btnResetPassword.addEventListener('click', window.resetPassword);
-    if (btnVerifyOtp) btnVerifyOtp.addEventListener('click', window.verifyOtp);
-    if (btnResendOtp) btnResendOtp.addEventListener('click', window.sendOtp);
+    if (btnLoginSubmit) {
+        btnLoginSubmit.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value;
 
-    // --- Dashboard Specific Logic ---
+            if (!username || !password) {
+                if (loginError) loginError.textContent = "Username/Email/Phone dan password harus diisi.";
+                window.showToast("Login gagal!", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/login/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": window.getCsrfToken(),
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({ username, password }),
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    if (loginError) loginError.textContent = "";
+                    window.showToast(data.message || "Login berhasil!", "success");
+                    if (authModal) authModal.style.display = "none";
+                    // After successful login, trigger checkLoginStatus to update UI and fetch profile/cart
+                    await window.checkLoginStatus();
+                } else {
+                    if (loginError) loginError.textContent = data.message;
+                    window.showToast("Login gagal!", "error");
+                    if (data.message && data.message.includes("Account not activated")) {
+                        currentOtpUserIdentifier = username; // Use login username as identifier for OTP
+                        if (otpMessage) otpMessage.textContent = "Akun belum diaktivasi. Mohon verifikasi email/telepon Anda dengan OTP.";
+                        window.showForm("otp");
+                    }
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                if (loginError) loginError.textContent = "Terjadi kesalahan saat login.";
+                window.showToast("Terjadi kesalahan saat login.", "error");
+            }
+        });
+    }
+
+    if (btnRegisterSubmit) {
+        btnRegisterSubmit.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const username = regUsernameInput.value.trim();
+            const name = regNameInput.value.trim();
+            const email = regEmailInput.value.trim();
+            const phone = regPhoneInput.value.trim();
+            const password = regPasswordInput.value;
+
+            if (!username || !name || !email || !phone || !password) {
+                if (registerError) registerError.textContent = "Semua field harus diisi.";
+                window.showToast("Pendaftaran gagal!", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/register/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": window.getCsrfToken(),
+                    },
+                    body: JSON.stringify({ username, email, password, phone, name }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    if (registerError) registerError.textContent = "";
+                    window.showToast(data.message || "Pendaftaran berhasil! Silakan verifikasi akun Anda dengan OTP.", "success");
+                    // Set the identifier for OTP verification to the registered email
+                    currentOtpUserIdentifier = email;
+                    if (otpMessage) otpMessage.textContent = data.message;
+                    window.showForm("otp"); // Show OTP form immediately after successful registration
+                } else {
+                    if (registerError) registerError.textContent = data.message;
+                    window.showToast("Pendaftaran gagal!", "error");
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                if (registerError) registerError.textContent = "Terjadi kesalahan saat pendaftaran.";
+                window.showToast("Terjadi kesalahan saat pendaftaran.", "error");
+            }
+        });
+    }
+
+    if (btnResetPassword) {
+        btnResetPassword.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const emailOrUsername = forgotIdInput.value.trim();
+
+            if (!emailOrUsername) {
+                if (forgotError) forgotError.textContent = "Masukkan Username / Email / No. Telepon Anda.";
+                return;
+            }
+            sendOtpToBackend(emailOrUsername); // Use the dedicated function for sending OTP
+        });
+    }
+
+    if (btnVerifyOtp) {
+        btnVerifyOtp.addEventListener("click", async (e) => {
+            e.preventDefault();
+            verifyOtpWithBackend(); // Use the dedicated function for verifying OTP
+        });
+    }
+
+    if (btnResendOtp) {
+        btnResendOtp.addEventListener("click", () => {
+            if (currentOtpUserIdentifier) {
+                sendOtpToBackend(currentOtpUserIdentifier);
+            } else {
+                if (otpError) otpError.textContent = "Tidak ada identitas pengguna yang tersimpan untuk mengirim ulang OTP.";
+                window.showToast("Gagal mengirim ulang OTP.", "error");
+            }
+        });
+    }
+
+    // --- Dashboard Specific Logic (only if elements exist) ---
 
     // Populate categories in the filter dropdown
     if (categoryFilter) {
-        const categories = [...new Set(products.map(p => p.category))];
+        const categories = [...new Set(products.map((p) => p.category))];
         categoryFilter.innerHTML = '<option value="all">Semua Kategori</option>';
-        categories.forEach(category => {
-            const option = document.createElement('option');
+        categories.forEach((category) => {
+            const option = document.createElement("option");
             option.value = category;
             option.textContent = category;
             categoryFilter.appendChild(option);
         });
 
         // Filter products when category changes
-        categoryFilter.addEventListener('change', () => filterAndSearchProducts());
+        categoryFilter.addEventListener("change", () => filterAndSearchProducts());
     }
 
-    // Search functionality
+    // Search functionality in header
     if (searchInput) {
-        searchInput.addEventListener('input', () => filterAndSearchProducts());
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialSearchTerm = urlParams.get('search');
+        if (initialSearchTerm) {
+            searchInput.value = initialSearchTerm;
+        }
+
+        searchInput.addEventListener("input", () => {
+            if (catalogContainer) { // Only filter in place if on the dashboard page
+                filterAndSearchProducts();
+            }
+        });
+
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const term = searchInput.value.trim();
+                if (term) {
+                    window.location.href = `/?search=${encodeURIComponent(term)}`;
+                } else {
+                    window.location.href = `/`;
+                }
+            }
+        });
     }
 
     // Combined filter and search function
     function filterAndSearchProducts() {
-        const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
-        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const selectedCategory = categoryFilter ? categoryFilter.value : "all";
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
         let filtered = products;
 
-        if (selectedCategory !== 'all') {
-            filtered = filtered.filter(product => product.category === selectedCategory);
+        if (selectedCategory !== "all") {
+            filtered = filtered.filter(
+                (product) => product.category === selectedCategory
+            );
         }
 
         if (searchTerm) {
-            filtered = filtered.filter(product =>
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm) ||
-                product.category.toLowerCase().includes(searchTerm)
+            filtered = filtered.filter(
+                (product) =>
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    product.description.toLowerCase().includes(searchTerm) ||
+                    product.category.toLowerCase().includes(searchTerm)
             );
         }
         renderProducts(filtered);
     }
 
     // Initial product rendering on dashboard load
-    renderProducts(products);
+    if (catalogContainer) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialSearchTerm = urlParams.get('search');
+        if (initialSearchTerm) {
+            const selectedCategory = categoryFilter ? categoryFilter.value : "all";
+            let filtered = products;
+            if (selectedCategory !== "all") {
+                filtered = filtered.filter(
+                    (product) => product.category === selectedCategory
+                );
+            }
+            filtered = filtered.filter(
+                (product) =>
+                    product.name.toLowerCase().includes(initialSearchTerm.toLowerCase()) ||
+                    product.description.toLowerCase().includes(initialSearchTerm.toLowerCase()) ||
+                    product.category.toLowerCase().includes(initialSearchTerm.toLowerCase())
+            );
+            renderProducts(filtered);
+        } else {
+            renderProducts(products);
+        }
+    }
 });

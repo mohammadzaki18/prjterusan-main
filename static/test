@@ -1,0 +1,49 @@
+//     otpError.textContent = ''; // Clear previous error
+
+//     try {
+//         const response = await fetch('/api/verify_otp/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({
+//                 email_or_username: currentOtpUserIdentifier,
+//                 otp_code: enteredOtp
+//             })
+//         });
+
+//         const result = await response.json();
+
+//         if (result.success) {
+//             if (otpPurpose === 'register') {
+//                 window.showToast('Pendaftaran berhasil! Silakan login.', 'success');
+//                 window.showForm('login');
+
+//                 // Clear registration form fields
+//                 regUsernameInput.value = '';
+//                 regNameInput.value = '';
+//                 regEmailInput.value = '';
+//                 regPhoneInput.value = '';
+//                 regPasswordInput.value = '';
+//             } else if (otpPurpose === 'reset') {
+//                 window.showToast('OTP valid. Silakan lanjutkan reset password.', 'success');
+//                 window.showForm('resetPassword'); // or wherever you want to send the user
+//             }
+
+//             // Clear OTP-related temporary data
+//             tempUserData = null;
+//             currentOtp = null;
+//             otpPurpose = null;
+//             currentOtpUserIdentifier = null;
+//             otpInput.value = '';
+//             if (authModal) authModal.style.display = 'none';
+//         } else {
+//             if (otpError) otpError.textContent = result.message || 'OTP salah.';
+//             window.showToast(result.message || 'Verifikasi OTP gagal.', 'error');
+//         }
+//     } catch (error) {
+//         console.error('Error verifying OTP:', error);
+//         if (otpError) otpError.textContent = 'Terjadi kesalahan saat memverifikasi OTP.';
+//         window.showToast('Kesalahan sistem saat verifikasi.', 'error');
+//     }
+// };

@@ -1,116 +1,118 @@
-// profile.js - This file contains profile-specific logic and relies on dashboard.js for global functions
+// profile.js - Logic for the user profile page.
+// This script relies on global functions exposed by dashboard.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    const profileUsernameInput = document.getElementById('profileUsername');
-    const profileNameInput = document.getElementById('profileName');
-    const profileEmailInput = document.getElementById('profileEmail');
-    const profilePhoneInput = document.getElementById('profilePhone');
-    const profileAddressInput = document.getElementById('profileAddress');
-    const profileForm = document.getElementById('profileForm');
+document.addEventListener("DOMContentLoaded", function() {
+    const profileForm = document.getElementById("profileForm");
+    const profileUsernameInput = document.getElementById("profileUsername");
+    const profileNameInput = document.getElementById("profileName");
+    const profileEmailInput = document.getElementById("profileEmail");
+    const profilePhoneInput = document.getElementById("profilePhone");
+    const profileAddressInput = document.getElementById("profileAddress"); // Make sure this element exists in profile.html
+    const profileMessage = document.getElementById("profileMessage");
 
     /**
-     * Loads user data into the profile form.
+     * Loads user profile data from the backend and populates the form.
+     * Exposed globally to be called by dashboard.js after login check.
      */
-    function loadProfileData() {
-        const currentUser = window.loadUserFromLocalStorage();
-        if (currentUser) {
-            profileUsernameInput.value = currentUser.username || '';
-            profileNameInput.value = currentUser.name || '';
-            profileEmailInput.value = currentUser.email || '';
-            profilePhoneInput.value = currentUser.phone || '';
-            profileAddressInput.value = currentUser.address || '';
-        } else {
-            window.showToast('Anda belum login. Silakan login.', 'error');
-            // Optionally redirect to dashboard or login page
-            // window.location.href = '/'; // Ini sudah benar mengarah ke root
-        }
-    }
+    window.loadUserProfile = async function() {
+        if (!profileForm) return; // Ensure profile elements exist
 
-    // Handle profile form submission
+        // First, check login status from the backend
+        const authResponse = await fetch("/api/get_current_user/", { method: "GET", credentials: "include" });
+        const authData = await authResponse.json();
+
+        if (!authData.is_authenticated) {
+            if (profileMessage) profileMessage.textContent = "Anda harus login untuk melihat profil.";
+            profileForm.style.display = 'none'; // Hide form if not logged in
+            window.showLoginModal();
+            return;
+        }
+
+        profileForm.style.display = 'block'; // Show form if logged in
+        if (profileMessage) profileMessage.textContent = "";
+
+        try {
+            // Fetch current user details from backend (assuming a /api/profile endpoint)
+            const response = await fetch("/api/profile/", {
+                method: "GET",
+                headers: {
+                    "X-CSRFToken": window.getCsrfToken(),
+                },
+                credentials: "include",
+            });
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                profileUsernameInput.value = data.username || '';
+                profileNameInput.value = data.name || '';
+                profileEmailInput.value = data.email || '';
+                profilePhoneInput.value = data.phone || '';
+                profileAddressInput.value = data.address || ''; // Ensure 'address' field exists in your Django UserProfile/User model and API response
+                window.showToast("Profil berhasil dimuat.", "success");
+            } else {
+                if (profileMessage) profileMessage.textContent = data.message || "Gagal memuat profil.";
+                window.showToast("Gagal memuat profil.", "error");
+            }
+        } catch (error) {
+            console.error("Error loading profile:", error);
+            if (profileMessage) profileMessage.textContent = "Terjadi kesalahan saat memuat profil.";
+            window.showToast("Terjadi kesalahan saat memuat profil.", "error");
+        }
+    };
+
+    /**
+     * Handles updating user profile data.
+     */
     if (profileForm) {
-        profileForm.addEventListener('submit', (e) => {
+        profileForm.addEventListener("submit", async function(e) {
             e.preventDefault();
 
-            let currentUser = window.loadUserFromLocalStorage();
-            if (currentUser) {
-                // Update currentUser object with new form values
-                currentUser.name = profileNameInput.value.trim();
-                currentUser.email = profileEmailInput.value.trim();
-                currentUser.phone = profilePhoneInput.value.trim();
-                currentUser.address = profileAddressInput.value.trim();
+            // Re-check login status before saving
+            const authResponse = await fetch("/api/get_current_user/", { method: "GET", credentials: "include" });
+            const authData = await authResponse.json();
 
-                // Update in the 'users' array in localStorage
-                let users = JSON.parse(localStorage.getItem('users')) || [];
-                const userIndex = users.findIndex(u => u.username === currentUser.username);
-                if (userIndex > -1) {
-                    users[userIndex] = currentUser;
-                    localStorage.setItem('users', JSON.stringify(users));
-                    // Also update the activeUser in localStorage if anything in currentUser changed
-                    // (though for profile, username typically doesn't change, but it's good practice)
-                    localStorage.setItem('activeUser', currentUser.username); // Re-set active user if username changed
-                    window.showToast('Profil berhasil diperbarui!', 'success');
-                    window.updateAuthUI(); // Update UI in case name changed
+            if (!authData.is_authenticated) {
+                window.showToast("Anda harus login untuk menyimpan profil.", "error");
+                window.showLoginModal();
+                return;
+            }
+
+            const updatedData = {
+                // Username typically cannot be changed
+                name: profileNameInput.value.trim(),
+                email: profileEmailInput.value.trim(),
+                phone: profilePhoneInput.value.trim(),
+                address: profileAddressInput.value.trim()
+            };
+
+            try {
+                const response = await fetch("/api/profile/", {
+                    method: "POST", // Or PUT/PATCH depending on your API design
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": window.getCsrfToken(),
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(updatedData),
+                });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.showToast(data.message || "Profil berhasil diperbarui!", "success");
+                    // No need to update localStorage for user data, as we fetch from DB
+                    window.checkLoginStatus(); // Re-check status to update header UI
                 } else {
-                    window.showToast('Gagal menemukan profil pengguna untuk diperbarui.', 'error');
+                    if (profileMessage) profileMessage.textContent = data.message || "Gagal memperbarui profil.";
+                    window.showToast("Gagal memperbarui profil.", "error");
                 }
-            } else {
-                window.showToast('Anda harus login untuk memperbarui profil.', 'error');
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                if (profileMessage) profileMessage.textContent = "Terjadi kesalahan saat memperbarui profil.";
+                window.showToast("Terjadi kesalahan saat memperbarui profil.", "error");
             }
         });
     }
 
-    // --- Inisialisasi untuk halaman profil ---
-    loadProfileData(); // Muat data profil saat halaman dimuat
-
-    // Initial load of user data and update UI for header (delegated to dashboard.js functions)
-    window.updateAuthUI();
-
-    // Event listeners for header auth buttons (Copied from dashboard.js for header on all pages)
-    document.getElementById('btnLogin')?.addEventListener('click', window.showLoginModal);
-    document.getElementById('btnRegister')?.addEventListener('click', window.showRegisterModal);
-
-    // Event listener for account menu dropdown
-    const accountMenu = document.getElementById('accountMenu');
-    const accountDropdown = document.getElementById('accountDropdown');
-    if (accountMenu && accountDropdown) {
-        accountMenu.addEventListener('click', function(e) {
-            accountDropdown.style.display = accountDropdown.style.display === 'block' ? 'none' : 'block';
-            e.stopPropagation();
-        });
-        document.addEventListener('click', function(e) {
-            if (!accountMenu.contains(e.target) && accountDropdown.style.display === 'block') {
-                accountDropdown.style.display = 'none';
-            }
-        });
-    }
-
-    // Logout button
-    document.getElementById('logoutBtn')?.addEventListener('click', window.logout);
-
-    // Close auth modal
-    document.getElementById('closeAuthModal')?.addEventListener('click', () => {
-        document.getElementById('authModal').style.display = 'none';
-    });
-
-    // Auth form navigation links
-    document.getElementById('showRegister')?.addEventListener('click', () => window.showForm('register'));
-    document.getElementById('showLoginFromRegister')?.addEventListener('click', () => window.showForm('login'));
-    document.getElementById('showForgotPassword')?.addEventListener('click', () => window.showForm('forgot'));
-    document.getElementById('showLoginFromForgot')?.addEventListener('click', () => window.showForm('login'));
-
-    // Auth form submissions
-    document.getElementById('btnLoginSubmit')?.addEventListener('click', window.login);
-    document.getElementById('btnRegisterSubmit')?.addEventListener('click', window.register);
-    document.getElementById('btnResetPassword')?.addEventListener('click', window.resetPassword);
-
-    // Search functionality in header (re-enable for other pages if needed)
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter' && searchInput.value.trim() !== '') {
-                // Redirect to dashboard (root URL) with search term
-                window.location.href = `/?search=${encodeURIComponent(searchInput.value.trim())}`; // <-- BARIS YANG DIPERBAIKI!
-            }
-        });
-    }
+    // Call loadUserProfile when the DOM is ready
+    window.loadUserProfile();
 });
