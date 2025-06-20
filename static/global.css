@@ -302,11 +302,24 @@ main {
   margin-bottom: 10px;
 }
 
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #ccc;
+}
+
 .product-card p {
   font-size: 14px;
   color: #6c757d;
   flex-grow: 1; /* Allows description to take space */
   margin-bottom: 15px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 /* === Buttons === */
@@ -393,6 +406,16 @@ main {
 
 
 /* === Cart Styles === */
+.cart-count-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 0 6px;
+  border-radius: 50%;
+  font-size: 12px;
+}
 .cart-header {
   display: flex;
   justify-content: space-between;
@@ -538,6 +561,12 @@ main {
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-top: 20px;
+}
+
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
 }
 
 /* === Profile Styles === */
