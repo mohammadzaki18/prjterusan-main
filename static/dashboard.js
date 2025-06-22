@@ -343,12 +343,14 @@ async function sendOtp(emailOrUsername) {
       showForm(otpVerificationForm); // Show OTP form
     } else {
       window.showToast(result.message || "Gagal mengirim OTP.", "error");
-      if (otpError) otpError.textContent = result.message || "Gagal mengirim OTP.";
+      if (otpError)
+        otpError.textContent = result.message || "Gagal mengirim OTP.";
     }
   } catch (error) {
     console.error("Error sending OTP:", error);
     window.showToast("Terjadi kesalahan saat mengirim OTP.", "error");
-    if (otpError) otpError.textContent = "Terjadi kesalahan koneksi saat mengirim OTP.";
+    if (otpError)
+      otpError.textContent = "Terjadi kesalahan koneksi saat mengirim OTP.";
   }
 }
 
@@ -367,8 +369,12 @@ async function verifyOtp() {
   }
 
   if (!identifier) {
-    if (otpError) otpError.textContent = "Identitas pengguna untuk OTP tidak ditemukan.";
-    window.showToast("Identitas pengguna tidak ditemukan, coba lagi dari awal.", "error");
+    if (otpError)
+      otpError.textContent = "Identitas pengguna untuk OTP tidak ditemukan.";
+    window.showToast(
+      "Identitas pengguna tidak ditemukan, coba lagi dari awal.",
+      "error"
+    );
     return;
   }
 
@@ -403,7 +409,8 @@ async function verifyOtp() {
     }
   } catch (err) {
     console.error("OTP verification error:", err);
-    if (otpError) otpError.textContent = "Terjadi kesalahan saat memverifikasi OTP.";
+    if (otpError)
+      otpError.textContent = "Terjadi kesalahan saat memverifikasi OTP.";
     window.showToast("Kesalahan sistem saat verifikasi.", "error");
   }
 }
@@ -423,9 +430,6 @@ function renderProducts(filteredProducts) {
       '<p style="text-align: center; color: #6c757d; font-size: 1.1em; padding: 50px;">Tidak ada produk yang ditemukan.</p>';
     return;
   }
-
-  // No longer rely on localStorage for currentUser here.
-  // The visibility of "Add to Cart" buttons is handled by `updateAddToCartButtonsVisibility`.
 
   filteredProducts.forEach((product) => {
     const productCard = document.createElement("div");
@@ -465,7 +469,9 @@ function renderProducts(filteredProducts) {
     }
   });
   // After rendering, ensure button visibility is correct based on global login state
-  checkLoginStatus(); // Re-check after products are rendered
+  // No need to call checkLoginStatus here again, as it's called once on DOMContentLoaded
+  // and updateAddToCartButtonsVisibility is called by checkLoginStatus.
+  // The crucial part is that checkLoginStatus is called after the product cards are in the DOM.
 }
 
 /**
@@ -498,13 +504,9 @@ function showProductDetail(productId) {
     product.stock !== undefined ? product.stock : "N/A";
   modalAddToCartBtn.dataset.productId = product.id;
 
-  // The visibility of this button will be managed by updateAddToCartButtonsVisibility
-  // after a login status check.
-  // modalAddToCartBtn.style.display = 'block'; // This was previously hardcoded.
-  // Now it will be correctly set by checkLoginStatus which calls updateAddToCartButtonsVisibility
-
   productDetailModal.style.display = "flex";
-  checkLoginStatus(); // Re-check status to correctly show/hide modalAddToCartBtn
+  // Re-check status to correctly show/hide modalAddToCartBtn when modal opens
+  checkLoginStatus();
 }
 
 // Close product detail modal
@@ -530,27 +532,6 @@ if (modalAddToCartBtn) {
  * @param {number} productId - The ID of the product to add.
  */
 window.addToCart = function (productId) {
-  // Instead of localStorage.getItem("currentUser"), check live status
-  // or rely on the UI already hiding the button if not logged in.
-  // For robustness, you might want to call checkLoginStatus here again.
-  // Or, when a user clicks, if not logged in, prompt login.
-
-  // Since we rely on the button being hidden if not logged in,
-  // this function assumes the user IS logged in if they can click.
-  // However, for API calls, the backend will verify authentication.
-
-  // This part of cart logic still uses localStorage as per your original code.
-  // If your Django backend also manages the cart, this needs to be an API call.
-  // For this fix, I'm keeping the localStorage cart logic as it was.
-  // If you have a Django cart API, replace this with an AJAX call.
-
-  // Dummy user for local storage cart if not using backend cart
-  // You might want to make this dynamic from Django's current user
-  const currentUserDummy = { username: "guest" }; // Fallback
-  // If you have `data.username` from `checkLoginStatus`, use that.
-  // For now, let's just make sure the UI part is correct.
-
-  // Check login status explicitly for cart operation
   fetch("/api/get_current_user/")
     .then((res) => res.json())
     .then((data) => {
@@ -620,7 +601,8 @@ document.addEventListener("DOMContentLoaded", function () {
   btnResendOtp = document.getElementById("btnResendOtp");
 
   // Initial load of user data and update UI
-  checkLoginStatus(); // Call this once on page load
+  // Call this once on page load to set initial UI state correctly
+  checkLoginStatus();
 
   // Event listeners for auth buttons in header
   const btnLoginHeader = document.getElementById("btnLogin");
@@ -691,7 +673,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const password = loginPasswordInput.value.trim();
 
       if (!username || !password) {
-        if (loginError) loginError.textContent = "Username/Email/Phone dan password harus diisi.";
+        if (loginError)
+          loginError.textContent = "Username/Email/Phone dan password harus diisi.";
         window.showToast("Login gagal: Data tidak lengkap!", "error");
         return;
       }
@@ -713,16 +696,15 @@ document.addEventListener("DOMContentLoaded", function () {
           window.showToast(data.message, "success");
           if (authModal) authModal.style.display = "none";
           checkLoginStatus(); // Update UI after successful login
-          // No need for window.location.href = "/" if using SPA-like updates,
-          // but if you expect a full page reload, keep it.
-          // For now, let's rely on checkLoginStatus to update UI.
         } else {
           if (loginError) loginError.textContent = data.message;
           window.showToast(data.message || "Login gagal!", "error");
           if (data.message && data.message.includes("not activated")) {
             // If account not activated, show OTP form and pre-fill identifier
             currentOtpUserIdentifier = username; // Use username as identifier for resending
-            if (otpMessage) otpMessage.textContent = "Akun belum aktif. Mohon verifikasi email/telepon Anda dengan OTP.";
+            if (otpMessage)
+              otpMessage.textContent =
+                "Akun belum aktif. Mohon verifikasi email/telepon Anda dengan OTP.";
             showForm(otpVerificationForm);
           }
         }
@@ -769,18 +751,19 @@ document.addEventListener("DOMContentLoaded", function () {
           if (otpMessage) otpMessage.textContent = data.message;
           showForm(otpVerificationForm); // Show OTP form immediately after successful registration request
           // Clear registration fields
-          regUsernameInput.value = '';
-          regNameInput.value = '';
-          regEmailInput.value = '';
-          regPhoneInput.value = '';
-          regPasswordInput.value = '';
+          regUsernameInput.value = "";
+          regNameInput.value = "";
+          regEmailInput.value = "";
+          regPhoneInput.value = "";
+          regPasswordInput.value = "";
         } else {
           if (registerError) registerError.textContent = data.message;
           window.showToast(data.message || "Pendaftaran gagal!", "error");
         }
       } catch (error) {
         console.error("Registration error:", error);
-        if (registerError) registerError.textContent = "Terjadi kesalahan saat pendaftaran.";
+        if (registerError)
+          registerError.textContent = "Terjadi kesalahan saat pendaftaran.";
         window.showToast("Terjadi kesalahan sistem saat pendaftaran.", "error");
       }
     });
@@ -793,7 +776,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const emailOrUsername = forgotIdInput.value.trim();
 
       if (!emailOrUsername) {
-        if (forgotError) forgotError.textContent = "Masukkan Username / Email / No. Telepon Anda.";
+        if (forgotError)
+          forgotError.textContent = "Masukkan Username / Email / No. Telepon Anda.";
         return;
       }
       sendOtp(emailOrUsername); // Use the unified sendOtp function
@@ -816,8 +800,12 @@ document.addEventListener("DOMContentLoaded", function () {
         sendOtp(currentOtpUserIdentifier); // Resend to the last identifier used
         window.showToast("Mengirim ulang OTP...", "info");
       } else {
-        if (otpError) otpError.textContent = "Tidak ada tujuan OTP yang tersimpan untuk dikirim ulang.";
-        window.showToast("Tidak dapat mengirim ulang OTP. Silakan mulai dari awal.", "error");
+        if (otpError)
+          otpError.textContent = "Tidak ada tujuan OTP yang tersimpan untuk dikirim ulang.";
+        window.showToast(
+          "Tidak dapat mengirim ulang OTP. Silakan mulai dari awal.",
+          "error"
+        );
       }
     });
   }
@@ -869,5 +857,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Initial product rendering on dashboard load
-  renderProducts(products);
+  renderProducts(products); // <--- Ini adalah bagian yang ditambahkan/dipindahkan
 });
