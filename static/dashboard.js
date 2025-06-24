@@ -1,4 +1,3 @@
-// dashboard.js - This file will contain global functions and dashboard specific logic
 console.log("dashboard.js loaded");
 
 // Global variables (mock data for products - still used for frontend display)

@@ -18,6 +18,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 # Existing views (keep them as they are)
+def admin_dashboard_view(request):
+    return render(request, 'admin_dashboard.html', {})
+
 def dashboard(request):
     return render(request, 'dashboard.html')
 

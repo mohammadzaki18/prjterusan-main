@@ -1,0 +1,535 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | TerusanMinimarket</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'global.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="admin-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Admin Panel</h2>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="#dashboard" class="nav-link active" data-section="dashboard"
+                ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="#products" class="nav-link" data-section="products"
+                ><i class="fas fa-box-open"></i> Produk</a
+              >
+            </li>
+            <li>
+              <a href="#categories" class="nav-link" data-section="categories"
+                ><i class="fas fa-tags"></i> Kategori</a
+              >
+            </li>
+            <li>
+              <a href="#orders" class="nav-link" data-section="orders"
+                ><i class="fas fa-shopping-cart"></i> Pesanan</a
+              >
+            </li>
+            <li>
+              <a href="#users" class="nav-link" data-section="users"
+                ><i class="fas fa-users"></i> Pengguna</a
+              >
+            </li>
+            <li>
+              <a href="#analytics" class="nav-link" data-section="analytics"
+                ><i class="fas fa-chart-line"></i> Analitik</a
+              >
+            </li>
+            <li>
+              <a href="#settings" class="nav-link" data-section="settings"
+                ><i class="fas fa-cog"></i> Pengaturan</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'home' %}" class="nav-link logout-link"
+                ><i class="fas fa-store"></i> Kembali ke Toko</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <header class="admin-header">
+          <h1 id="currentSectionTitle">Dashboard</h1>
+          <div class="header-actions">
+            </div>
+        </header>
+
+        <section id="dashboard" class="content-section active">
+          <h2>Ringkasan Dashboard</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Total Penjualan</h3>
+              <p>Rp 15.000.000</p>
+            </div>
+            <div class="stat-card">
+              <h3>Pesanan Baru</h3>
+              <p>12</p>
+            </div>
+            <div class="stat-card">
+              <h3>Jumlah Produk</h3>
+              <p>250</p>
+            </div>
+            <div class="stat-card">
+              <h3>Pelanggan Baru</h3>
+              <p>8</p>
+            </div>
+          </div>
+
+          <div class="recent-activities">
+            <h2>Aktivitas Terbaru</h2>
+            <ul>
+              <li>Pesanan #1234567 dari John Doe - <span class="status-pending">Pending</span></li>
+              <li>Produk "Keyboard Mekanik RGB" ditambahkan oleh Admin</li>
+              <li>Pengguna "Jane Smith" baru terdaftar</li>
+              <li>Pesanan #1234566 dikirim - <span class="status-completed">Selesai</span></li>
+              <li>Kategori "Elektronik" diperbarui</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="products" class="content-section">
+            <h2>Manajemen Produk</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P001</td>
+                            <td>Kopi Robusta 250gr</td>
+                            <td>Minuman</td>
+                            <td>Rp 25.000</td>
+                            <td>150</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>P002</td>
+                            <td>Mie Instan Rasa Ayam Bawang</td>
+                            <td>Makanan</td>
+                            <td>Rp 3.500</td>
+                            <td>300</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>P003</td>
+                            <td>Sabun Mandi Cair 500ml</td>
+                            <td>Perawatan Diri</td>
+                            <td>Rp 18.000</td>
+                            <td>80</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>P004</td>
+                            <td>Susu UHT Full Cream 1L</td>
+                            <td>Minuman</td>
+                            <td>Rp 17.500</td>
+                            <td>120</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>P005</td>
+                            <td>Pasta Gigi Anti Karies</td>
+                            <td>Perawatan Diri</td>
+                            <td>Rp 12.000</td>
+                            <td>90</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+            <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-product-form"><i class="fas fa-plus"></i> Tambahkan Produk Baru</button>
+
+            <div id="add-product-form" class="content-section" style="display:none;">
+                <h2>Form Produk Baru</h2>
+                <form class="add-product-form">
+                    <div class="form-group">
+                        <label for="productName">Nama Produk:</label>
+                        <input type="text" id="productName" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Kategori:</label>
+                        <select id="productCategory" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Minuman">Minuman</option>
+                            <option value="Perawatan Diri">Perawatan Diri</option>
+                            <option value="Rumah Tangga">Rumah Tangga</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Harga:</label>
+                        <input type="number" id="productPrice" min="0" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stok:</label>
+                        <input type="number" id="productStock" min="0" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Deskripsi:</label>
+                        <textarea id="productDescription" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Produk</button>
+                    <button type="button" class="btn btn-outline-secondary cancel-form-btn" data-target-section="products"><i class="fas fa-times"></i> Batal</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="categories" class="content-section">
+            <h2>Manajemen Kategori</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Kategori</th>
+                            <th>Jumlah Produk</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>C001</td>
+                            <td>Makanan</td>
+                            <td>50</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>C002</td>
+                            <td>Minuman</td>
+                            <td>40</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>C003</td>
+                            <td>Perawatan Diri</td>
+                            <td>30</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>C004</td>
+                            <td>Rumah Tangga</td>
+                            <td>25</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-category-form"><i class="fas fa-plus"></i> Tambahkan Kategori Baru</button>
+
+             <div id="add-category-form" class="content-section" style="display:none;">
+                <h2>Form Kategori Baru</h2>
+                <form class="add-category-form">
+                    <div class="form-group">
+                        <label for="categoryName">Nama Kategori:</label>
+                        <input type="text" id="categoryName" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Kategori</button>
+                    <button type="button" class="btn btn-outline-secondary cancel-form-btn" data-target-section="categories"><i class="fas fa-times"></i> Batal</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="orders" class="content-section">
+          <h2>Manajemen Pesanan</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Pesanan</th>
+                  <th>Pelanggan</th>
+                  <th>Tanggal</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#1234569</td>
+                  <td>Alice Wonderland</td>
+                  <td>2024-06-23</td>
+                  <td>Rp 75.000</td>
+                  <td><span class="status-pending">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-info" data-action="detail"><i class="fas fa-info-circle"></i> Detail</button>
+                    <button class="btn btn-sm btn-primary" data-action="process"><i class="fas fa-cogs"></i> Proses</button>
+                    <button class="btn btn-sm btn-danger" data-action="cancel"><i class="fas fa-times"></i> Batal</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#1234568</td>
+                  <td>Bob Builder</td>
+                  <td>2024-06-22</td>
+                  <td>Rp 120.000</td>
+                  <td><span class="status-completed">Selesai</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-info" data-action="detail"><i class="fas fa-info-circle"></i> Detail</button>
+                    <button class="btn btn-sm btn-success" data-action="print-invoice"><i class="fas fa-print"></i> Invoice</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#1234567</td>
+                  <td>Charlie Chaplin</td>
+                  <td>2024-06-22</td>
+                  <td>Rp 45.000</td>
+                  <td><span class="status-cancelled">Dibatalkan</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-info" data-action="detail"><i class="fas fa-info-circle"></i> Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                    <td>#1234566</td>
+                    <td>Diana Prince</td>
+                    <td>2024-06-21</td>
+                    <td>Rp 210.000</td>
+                    <td><span class="status-completed">Selesai</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-info" data-action="detail"><i class="fas fa-info-circle"></i> Detail</button>
+                      <button class="btn btn-sm btn-success" data-action="print-invoice"><i class="fas fa-print"></i> Invoice</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#1234565</td>
+                    <td>Eve Harrington</td>
+                    <td>2024-06-20</td>
+                    <td>Rp 90.000</td>
+                    <td><span class="status-pending">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-info" data-action="detail"><i class="fas fa-info-circle"></i> Detail</button>
+                      <button class="btn btn-sm btn-primary" data-action="process"><i class="fas fa-cogs"></i> Proses</button>
+                      <button class="btn btn-sm btn-danger" data-action="cancel"><i class="fas fa-times"></i> Batal</button>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="users" class="content-section">
+          <h2>Manajemen Pengguna</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Pengguna</th>
+                  <th>Nama Lengkap</th>
+                  <th>Email</th>
+                  <th>Telepon</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>U001</td>
+                  <td>John Doe</td>
+                  <td>john.doe@example.com</td>
+                  <td>+628123456789</td>
+                  <td><span class="status-completed">Aktif</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>U002</td>
+                  <td>Jane Smith</td>
+                  <td>jane.smith@example.com</td>
+                  <td>+62876543210</td>
+                  <td><span class="status-completed">Aktif</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                  </td>
+                </tr>
+                <tr>
+                    <td>U003</td>
+                    <td>Robert Johnson</td>
+                    <td>robert.j@example.com</td>
+                    <td>+62855112233</td>
+                    <td><span class="status-pending">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-success" data-action="approve"><i class="fas fa-check"></i> Setujui</button>
+                      <button class="btn btn-sm btn-danger" data-action="reject"><i class="fas fa-ban"></i> Tolak</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>U004</td>
+                    <td>Emily White</td>
+                    <td>emily.w@example.com</td>
+                    <td>+62811998877</td>
+                    <td><span class="status-completed">Aktif</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-user-form"><i class="fas fa-user-plus"></i> Tambahkan Pengguna Baru</button>
+
+          <div id="add-user-form" class="content-section" style="display:none;">
+            <h2>Form Pengguna Baru</h2>
+            <form class="add-user-form">
+                <div class="form-group">
+                    <label for="userName">Nama Lengkap:</label>
+                    <input type="text" id="userName" required />
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email:</label>
+                    <input type="email" id="userEmail" required />
+                </div>
+                <div class="form-group">
+                    <label for="userPhone">Nomor Telepon:</label>
+                    <input type="tel" id="userPhone" />
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">Password (opsional untuk edit):</label>
+                    <input type="password" id="userPassword" />
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Peran:</label>
+                    <select id="userRole" required>
+                        <option value="customer">Pelanggan</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Pengguna</button>
+                <button type="button" class="btn btn-outline-secondary cancel-form-btn" data-target-section="users"><i class="fas fa-times"></i> Batal</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="analytics" class="content-section">
+          <h2>Analitik Penjualan</h2>
+          <div class="analytics-charts">
+            <div class="chart-placeholder">
+                <h3>Penjualan Bulanan</h3>
+                <canvas id="monthlySalesChart" width="400" height="200"></canvas>
+                <ul>
+                    <li>Jan: Rp 1.500.000</li>
+                    <li>Feb: Rp 1.800.000</li>
+                    <li>Mar: Rp 2.200.000</li>
+                    <li>Apr: Rp 1.900.000</li>
+                    <li>Mei: Rp 2.500.000</li>
+                    <li>Jun: Rp 2.800.000</li>
+                </ul>
+            </div>
+            <div class="chart-placeholder">
+                <h3>Produk Terlaris</h3>
+                <canvas id="topProductsChart" width="400" height="200"></canvas>
+                <ul>
+                    <li>Kopi Robusta (1500 terjual)</li>
+                    <li>Mie Instan (1200 terjual)</li>
+                    <li>Susu UHT (900 terjual)</li>
+                </ul>
+            </div>
+          </div>
+          <button class="btn btn-primary mt-3"><i class="fas fa-download"></i> Unduh Laporan Penjualan</button>
+        </section>
+
+        <section id="settings" class="content-section">
+          <h2>Pengaturan Toko</h2>
+          <form class="settings-form">
+            <h3>Informasi Toko</h3>
+            <div class="form-group">
+                <label for="storeName">Nama Toko:</label>
+                <input type="text" id="storeName" value="TerusanMinimarket" />
+            </div>
+            <div class="form-group">
+                <label for="storeEmail">Email Toko:</label>
+                <input type="email" id="storeEmail" value="info@terusanminimarket.com" />
+            </div>
+            <div class="form-group">
+                <label for="storePhone">Nomor Telepon Toko:</label>
+                <input type="tel" id="storePhone" value="+6281234567890" />
+            </div>
+            <h3>Pengaturan Pengiriman</h3>
+            <div class="form-group">
+                <label for="shippingCost">Biaya Pengiriman Default:</label>
+                <input type="number" id="shippingCost" value="10000" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="freeShippingMin">Minimal Belanja Gratis Ongkir:</label>
+                <input type="number" id="freeShippingMin" value="150000" min="0" />
+            </div>
+            <h3>Pengaturan Metode Pembayaran</h3>
+            <div class="form-group">
+                <label for="paymentMethods">Metode Pembayaran Aktif:</label>
+                <div>
+                    <input type="checkbox" id="payMethodBank" checked /> <label for="payMethodBank">Transfer Bank</label><br>
+                    <input type="checkbox" id="payMethodOVO" /> <label for="payMethodOVO">OVO</label><br>
+                    <input type="checkbox" id="payMethodGopay" /> <label for="payMethodGopay">GoPay</label><br>
+                    <input type="checkbox" id="payMethodDana" /> <label for="payMethodDana">Dana</label><br>
+                    <input type="checkbox" id="payMethodQris" /> <label for="payMethodDana">Qris</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Pengaturan</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'admin.js' %}" defer></script>
+    {# For real charts, you'd include a charting library here, e.g., Chart.js #}
+    {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
+  </body>
+</html>
