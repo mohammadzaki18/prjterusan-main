@@ -1,6 +1,7 @@
 # products/urls.py
 
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('help_faq/', views.help_faq, name='help'),
     path('tutorial/', views.tutorial, name='tutorial'),
     path('return_req/', views.return_req, name='return'),
+    path('admin_dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('admin_login/', views.admin_login_view, name='admin_login'),
 
     path('api/get_current_user/', views.get_current_user, name='get_current_user'),
     # New Authentication URLs

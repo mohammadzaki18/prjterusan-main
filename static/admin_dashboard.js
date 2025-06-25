@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showSection(sectionId);
             } else if (this.classList.contains('logout-link')) {
                 // If it's a "Back to Shop" link, allow default behavior or handle logout
+                // For a real logout, you'd clear session/local storage here
                 window.location.href = this.href;
             }
         });

@@ -1,23 +1,30 @@
 # products/views.py
 
+import json
+import traceback
+from datetime import datetime, timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
-from django.http import JsonResponse # To send JSON responses for AJAX
-from django.views.decorators.csrf import csrf_exempt # For AJAX, consider CSRF tokens properly in production
-from django.core.mail import send_mail
-from datetime import datetime, timedelta
-from .models import OTP # Import the OTP model
-import traceback
-import json
-from django.utils.timezone import now
-from .models import Cart, CartItem, Product
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.http import JsonResponse  # To send JSON responses for AJAX
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
+from django.views.decorators.csrf import \
+    csrf_exempt  # For AJAX, consider CSRF tokens properly in production
+
+from .models import OTP  # Import the OTP model
+from .models import Cart, CartItem, Product
+
 
 # Existing views (keep them as they are)
+def admin_login_view(request):
+    return render(request, 'admin_login.html', {})
+
 def admin_dashboard_view(request):
     return render(request, 'admin_dashboard.html', {})
 

@@ -4,9 +4,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Elemen DOM ---
     // Mendapatkan referensi ke semua elemen HTML yang dibutuhkan di halaman checkout
+    const receiverNameInput = document.getElementById('receiverName');
+    const receiverPhoneInput = document.getElementById('receiverPhone');
     const addressInput = document.getElementById('address');
     const cityInput = document.getElementById('city');
+    const kabupatenInput = document.getElementById('kabupaten');
+    const provinceInput = document.getElementById('province');
     const postalCodeInput = document.getElementById('postalCode');
+    const rtRwInput = document.getElementById('rtRw');
+    const locationDetailsInput = document.getElementById('locationDetails');
+
     const checkoutItemsContainer = document.getElementById('checkoutItems');
     const checkoutSubtotalElem = document.getElementById('checkoutSubtotal');
     const checkoutShippingElem = document.getElementById('checkoutShipping');
@@ -96,13 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (placeOrderBtn) {
         placeOrderBtn.addEventListener('click', () => {
             // Dapatkan nilai dari input alamat dan metode pembayaran
+            const receiverName = receiverNameInput ? receiverNameInput.value.trim() : '';
+            const receiverPhone = receiverPhoneInput ? receiverPhoneInput.value.trim() : '';
             const address = addressInput ? addressInput.value.trim() : '';
             const city = cityInput ? cityInput.value.trim() : '';
+            const kabupaten = kabupatenInput ? kabupatenInput.value.trim() : '';
+            const province = provinceInput ? provinceInput.value.trim() : '';
             const postalCode = postalCodeInput ? postalCodeInput.value.trim() : '';
+            const rtRw = rtRwInput ? rtRwInput.value.trim() : '';
+            const locationDetails = locationDetailsInput ? locationDetailsInput.value.trim() : '';
             const paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : '';
 
             // --- Validasi Input Alamat ---
-            if (!address || !city || !postalCode) {
+            if (!receiverName || !receiverPhone || !address || !city || !kabupaten || !province || !postalCode || !rtRw || !locationDetails) {
                 window.showToast('Mohon lengkapi semua detail alamat pengiriman.', 'error');
                 return; // Hentikan proses jika ada input yang kosong
             }
@@ -119,7 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- Log Informasi Pesanan (untuk debugging/pengembangan) ---
             console.log('Pesanan ditempatkan untuk:', currentUser.username);
-            console.log('Alamat Pengiriman:', { address, city, postalCode });
+            console.log('Alamat Pengiriman:', {
+                receiverName,
+                receiverPhone,
+                address,
+                city,
+                kabupaten,
+                province,
+                postalCode,
+                rtRw,
+                locationDetails,
+                namalamat
+            });
             console.log('Metode Pembayaran:', paymentMethod);
             console.log('Item Pesanan:', cart);
             console.log('Jumlah Total (dari elemen DOM):', checkoutTotalElem ? checkoutTotalElem.textContent : 'N/A');
@@ -132,14 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Tampilkan notifikasi sukses terlebih dahulu
             window.showToast('Pembayaran berhasil dikonfirmasi! Pesanan Anda sedang diproses.', 'success');
 
+            // Hapus item keranjang setelah pesanan berhasil ditempatkan
+            localStorage.removeItem(cartKey);
+
             // Arahkan pengguna ke halaman sukses pembayaran setelah jeda singkat
             setTimeout(() => {
-                // Di sini kita TIDAK menggunakan '{{ url "order_success" }}'
-                // karena ini adalah file .js terpisah yang tidak diproses oleh Django template engine.
-                // Anda harus menyediakan URL ini dari HTML atau variabel global jika ingin dinamis.
-                // Untuk kesederhanaan, kita bisa asumsikan URL statis '/order-success/'
-                // atau lebih baik, berikan URL ini melalui data attribute di HTML.
-                // Saya akan tunjukkan cara passing URL via HTML.
                 window.location.href = placeOrderBtn.dataset.successUrl || '/order-success/';
             }, 1500); // Tunda 1.5 detik agar toast bisa terlihat
         });

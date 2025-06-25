@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | TerusanMinimarket</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'global.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'admin_dashboard.css' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -488,7 +488,7 @@
 
         <section id="settings" class="content-section">
           <h2>Pengaturan Toko</h2>
-          <form class="settings-form">
+          <form class="settings-form" id="settings-form-id"> {# Added id for explicit form linking #}
             <h3>Informasi Toko</h3>
             <div class="form-group">
                 <label for="storeName">Nama Toko:</label>
@@ -528,7 +528,7 @@
       </main>
     </div>
 
-    <script src="{% static 'admin.js' %}" defer></script>
+    <script src="{% static 'admin_dashboard.js' %}" defer></script>
     {# For real charts, you'd include a charting library here, e.g., Chart.js #}
     {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
   </body>
