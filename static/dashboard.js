@@ -1,8 +1,9 @@
+// dashboard.js
 console.log("dashboard.js loaded");
 
 // Global variables (mock data for products - still used for frontend display)
 // NOTE: In a real e-commerce app, products would ideally be fetched from backend API
-const products = [
+window.products = [
   {
     id: 1,
     name: "Beras Premium",
@@ -139,9 +140,9 @@ const otpError = document.getElementById("otpError");
 const toast = document.getElementById("toast");
 
 // Buttons to switch forms
-const showRegisterFromLogin = document.getElementById("showRegisterFromLogin");
+const showRegisterFromLogin = document.getElementById("showRegister"); // Updated ID to match HTML
 const showLoginFromRegister = document.getElementById("showLoginFromRegister");
-const showForgotFromLogin = document.getElementById("showForgotFromLogin");
+const showForgotFromLogin = document.getElementById("showForgotPassword"); // Updated ID to match HTML
 const showLoginFromForgot = document.getElementById("showLoginFromForgot");
 const showLoginFromOtpLink = document.getElementById("showLoginFromOtp");
 
@@ -253,6 +254,19 @@ function getCookie(name) {
 // Global variable to store the identifier for OTP re-sending
 let currentOtpUserIdentifier = null;
 
+/**
+ * Fungsi untuk memuat data pengguna dari localStorage (simulasi).
+ * Dalam aplikasi nyata, ini akan diperbarui dari status autentikasi backend.
+ * @returns {object|null} Objek pengguna jika ada, null jika tidak ada.
+ */
+window.loadUserFromLocalStorage = function () {
+  // Ini adalah simulasi. Dalam aplikasi nyata, Anda akan memiliki state pengguna yang lebih canggih,
+  // mungkin dari API atau cookie sesi.
+  // Untuk tujuan demo ini, kita berasumsi 'currentLoggedInUser' ada setelah login berhasil.
+  const user = localStorage.getItem('currentLoggedInUser');
+  return user ? JSON.parse(user) : null;
+};
+
 // --- Authentication and User Management (Django Backend) ---
 
 /**
@@ -271,10 +285,19 @@ async function checkLoginStatus() {
       if (accountMenu) accountMenu.style.display = "block";
       if (accountUsername) accountUsername.textContent = data.username;
       updateAddToCartButtonsVisibility(true);
+      // Store current logged in user to localStorage for other scripts
+      // This is a simulation, in real app user data comes from secure session
+      localStorage.setItem('currentLoggedInUser', JSON.stringify({ username: data.username, /* other user data */ }));
     } else {
       if (authButtons) authButtons.style.display = "block";
       if (accountMenu) accountMenu.style.display = "none";
       updateAddToCartButtonsVisibility(false);
+      // Clear current logged in user from localStorage
+      localStorage.removeItem('currentLoggedInUser');
+    }
+    // Update cart icon count based on current user after auth check
+    if (typeof window.updateCartIconCount === "function") {
+      window.updateCartIconCount();
     }
   } catch (error) {
     console.error("Failed to check login status:", error);
@@ -282,6 +305,11 @@ async function checkLoginStatus() {
     if (authButtons) authButtons.style.display = "block";
     if (accountMenu) accountMenu.style.display = "none";
     updateAddToCartButtonsVisibility(false);
+    localStorage.removeItem('currentLoggedInUser'); // Ensure cleared on error
+    // Ensure cart icon count is reset if there's an auth error
+    if (typeof window.updateCartIconCount === "function") {
+      window.updateCartIconCount(); // This will show 0 items
+    }
   }
 }
 
@@ -300,8 +328,10 @@ window.logout = async function () {
 
     const data = await response.json();
     if (response.ok && data.success) {
-      window.showToast("Anda telah logout.", "info");
-      // Redirect or reload to reflect logout state
+      window.showToast(data.message || "Anda telah logout.", "info");
+      // Clear current logged in user from localStorage on successful logout
+      localStorage.removeItem('currentLoggedInUser');
+      // Reload to reflect logout state
       window.location.reload();
     } else {
       window.showToast(data.message || "Gagal logout.", "error");
@@ -468,9 +498,7 @@ function renderProducts(filteredProducts) {
     }
   });
   // After rendering, ensure button visibility is correct based on global login state
-  // No need to call checkLoginStatus here again, as it's called once on DOMContentLoaded
-  // and updateAddToCartButtonsVisibility is called by checkLoginStatus.
-  // The crucial part is that checkLoginStatus is called after the product cards are in the DOM.
+  checkLoginStatus(); // Re-check login status to update button visibility
 }
 
 /**
@@ -505,7 +533,7 @@ function showProductDetail(productId) {
 
   productDetailModal.style.display = "flex";
   // Re-check status to correctly show/hide modalAddToCartBtn when modal opens
-  checkLoginStatus();
+  checkLoginStatus(); // This will trigger updateAddToCartButtonsVisibility
 }
 
 // Close product detail modal
@@ -531,7 +559,10 @@ if (modalAddToCartBtn) {
  * @param {number} productId - The ID of the product to add.
  */
 window.addToCart = function (productId) {
-  fetch("/api/get_current_user/")
+  fetch("/api/get_current_user/", {
+    method: "GET",
+    credentials: "include",
+  })
     .then((res) => res.json())
     .then((data) => {
       if (!data.is_authenticated) {
@@ -568,7 +599,16 @@ window.addToCart = function (productId) {
         }
       } else {
         if (productStock > 0) {
-          cart.push({ ...product, quantity: 1 });
+          // Kunci perbaikan: Menyimpan semua properti produk yang diperlukan
+          const newItem = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1,
+          };
+          cart.push(newItem);
+          console.log("Product pushed to cart:", newItem); // DEBUG: Log the item being pushed
           window.showToast(
             `${product.name} ditambahkan ke keranjang.`,
             "success"
@@ -578,7 +618,11 @@ window.addToCart = function (productId) {
         }
       }
       localStorage.setItem(cartKey, JSON.stringify(cart));
-      // Optionally, update a cart count icon in the header if you have one
+      console.log("Current cart in localStorage:", JSON.parse(localStorage.getItem(cartKey))); // DEBUG: Log the entire cart
+      // Memperbarui jumlah item di ikon keranjang pada header
+      if (typeof window.updateCartIconCount === "function") {
+        window.updateCartIconCount();
+      }
     })
     .catch((error) => {
       console.error("Error checking login status for cart:", error);
@@ -588,6 +632,21 @@ window.addToCart = function (productId) {
       );
     });
 };
+
+// Fungsi untuk memperbarui jumlah item di ikon keranjang pada header
+window.updateCartIconCount = function () {
+  const currentUser = window.loadUserFromLocalStorage();
+  const cartKey = currentUser ? `cart_${currentUser.username}` : null;
+  const cart = cartKey ? JSON.parse(localStorage.getItem(cartKey)) || [] : [];
+  const cartCountElem = document.getElementById("cartCount"); // Asumsi ada elemen dengan ID ini untuk jumlah
+
+  if (cartCountElem) {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountElem.textContent = totalItems;
+    cartCountElem.style.display = totalItems > 0 ? "inline-block" : "none";
+  }
+};
+
 
 // --- Event Listeners and Initializations ---
 
@@ -612,20 +671,20 @@ document.addEventListener("DOMContentLoaded", function () {
     btnRegisterHeader.addEventListener("click", window.showRegisterModal);
 
   // Event listeners for form switching
-  if (showRegisterFromLogin)
-    showRegisterFromLogin.addEventListener("click", () =>
-      showForm(registerForm)
-    );
+  const showRegisterLink = document.getElementById("showRegister"); // Get the correct ID from HTML
+  const showForgotPasswordLink = document.getElementById("showForgotPassword"); // Get the correct ID from HTML
+
+  if (showRegisterLink)
+    showRegisterLink.addEventListener("click", () => showForm(registerForm));
   if (showLoginFromRegister)
     showLoginFromRegister.addEventListener("click", () => showForm(loginForm));
-  if (showForgotFromLogin)
-    showForgotFromLogin.addEventListener("click", () =>
-      showForm(forgotPasswordForm)
-    );
+  if (showForgotPasswordLink)
+    showForgotPasswordLink.addEventListener("click", () => showForm(forgotPasswordForm)); // Corrected ID usage
   if (showLoginFromForgot)
     showLoginFromForgot.addEventListener("click", () => showForm(loginForm));
   if (showLoginFromOtpLink)
     showLoginFromOtpLink.addEventListener("click", () => showForm(loginForm));
+
 
   // Event listener for account menu dropdown
   if (accountMenu && accountDropdown) {
@@ -856,5 +915,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Initial product rendering on dashboard load
-  renderProducts(products); // <--- Ini adalah bagian yang ditambahkan/dipindahkan
+  renderProducts(products);
 });

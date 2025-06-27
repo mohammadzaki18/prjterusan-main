@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const postalCodeInput = document.getElementById('postalCode');
     const rtRwInput = document.getElementById('rtRw');
     const locationDetailsInput = document.getElementById('locationDetails');
+    const namalamatInput = document.getElementById('namalamatInput'); // Get the new input for 'Nama Alamat'
 
     const checkoutItemsContainer = document.getElementById('checkoutItems');
     const checkoutSubtotalElem = document.getElementById('checkoutSubtotal');
@@ -23,6 +24,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Biaya pengiriman yang konsisten, diasumsikan dalam IDR
     const SHIPPING_COST = 15000;
+
+    // Data produk dari window.products (disediakan oleh dashboard.js)
+    // PENTING: Menambahkan kembali fallback produk jika window.products belum tersedia.
+    const products = window.products || [
+        { id: 1, name: 'Beras Premium', price: 12000, image: 'https://cdn-icons-png.flaticon.com/512/1256/1256425.png' },
+        { id: 2, name: 'Minyak Goreng', price: 15000, image: 'https://cdn-icons-png.flaticon.com/512/2938/2938499.png' },
+        { id: 3, name: 'Gula Pasir', price: 13500, image: 'https://cdn-icons-png.flaticon.com/512/2938/2938531.png' },
+        { id: 4, name: "Telur Ayam", price: 2500, image: "https://cdn-icons-png.flaticon.com/512/1792/1792750.png" },
+        { id: 5, name: "Mie Instan", price: 3000, image: "https://cdn-icons-png.flaticon.com/512/3233/3233917.png" },
+        { id: 6, name: "Sabun Mandi", price: 7000, image: "https://cdn-icons-png.flaticon.com/512/2938/2938507.png" },
+        { id: 7, name: "Shampo Anti Ketombe", price: 20000, image: "https://cdn-icons-png.flaticon.com/512/2938/2938503.png" },
+        { id: 8, name: "Pasta Gigi", price: 10000, image: "https://cdn-icons-png.flaticon.com/512/2938/2938515.png" },
+        { id: 9, name: "Kopi Hitam", price: 18000, image: "https://cdn-icons-png.flaticon.com/512/2938/2938497.png" },
+        { id: 10, name: "Teh Celup", price: 10000, image: "https://cdn-icons-png.flaticon.com/512/2938/2938505.png" },
+    ];
+
 
     /**
      * Merender item-item keranjang untuk ringkasan checkout dan memperbarui total biaya.
@@ -73,13 +90,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Rendering Item Keranjang ---
         cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
+            // Cari detail produk dari array `products` yang tersedia
+            const productDetail = products.find(p => p.id === item.id);
+            if (!productDetail) {
+                console.warn(`Produk dengan ID ${item.id} tidak ditemukan dalam daftar produk.`);
+                // Anda bisa memilih untuk melewati item ini atau menampilkannya dengan info terbatas
+                return;
+            }
+
+            const itemTotal = productDetail.price * item.quantity; // Gunakan harga dari productDetail
             subtotal += itemTotal;
 
             const itemDiv = document.createElement('div');
             itemDiv.classList.add('summary-item'); // Tambahkan kelas CSS untuk styling
             itemDiv.innerHTML = `
-                <p><strong>${item.name}</strong> x ${item.quantity}</p>
+                <img src="${productDetail.image}" alt="${productDetail.name}" style="width: 50px; height: 50px; margin-right: 10px;">
+                <p><strong>${productDetail.name}</strong> x ${item.quantity}</p>
                 <span>Rp ${itemTotal.toLocaleString('id-ID')}</span>
             `;
             checkoutItemsContainer.appendChild(itemDiv);
@@ -112,13 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const postalCode = postalCodeInput ? postalCodeInput.value.trim() : '';
             const rtRw = rtRwInput ? rtRwInput.value.trim() : '';
             const locationDetails = locationDetailsInput ? locationDetailsInput.value.trim() : '';
+            const namalamat = namalamatInput ? namalamatInput.value.trim() : ''; // Retrieve the value for 'Nama Alamat'
             const paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : '';
 
             // --- Validasi Input Alamat ---
-            if (!receiverName || !receiverPhone || !address || !city || !kabupaten || !province || !postalCode || !rtRw || !locationDetails) {
+            // Include namalamat in the validation
+            if (!receiverName || !receiverPhone || !address || !city || !kabupaten || !province || !postalCode || !rtRw || !locationDetails || !namalamat) {
                 window.showToast('Mohon lengkapi semua detail alamat pengiriman.', 'error');
                 return; // Hentikan proses jika ada input yang kosong
             }
+            if (!paymentMethod || paymentMethod === "") {
+                window.showToast('Harap pilih metode pembayaran.', 'error');
+                return;
+            }
+
 
             const currentUser = window.loadUserFromLocalStorage();
             // Periksa kembali keranjang sebelum menempatkan pesanan
@@ -158,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Hapus item keranjang setelah pesanan berhasil ditempatkan
             localStorage.removeItem(cartKey);
+            window.updateCartItemCount(); // Perbarui jumlah item di header/keranjang setelah checkout
 
             // Arahkan pengguna ke halaman sukses pembayaran setelah jeda singkat
             setTimeout(() => {

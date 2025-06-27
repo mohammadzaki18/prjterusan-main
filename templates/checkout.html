@@ -63,13 +63,13 @@
 
     <label for="province">Provinsi:</label>
     <input type="text" id="province" placeholder="Masukkan provinsi Anda" />
-    
-    <label for="kabupaten">Kabupaten/Kota:</label> {# Menggabungkan atau menyesuaikan label #}
+
+    <label for="kabupaten">Kabupaten/Kota:</label>
     <input type="text" id="kabupaten" placeholder="Masukkan kabupaten atau kota Anda" />
 
-    <label for="city">Kecamatan:</label> {# Menambahkan kecamatan jika relevan, atau gunakan "Kota" untuk level kota #}
+    <label for="city">Kecamatan:</label>
     <input type="text" id="city" placeholder="Masukkan kecamatan Anda" />
-    
+
     <label for="postalCode">Kode Pos:</label>
     <input type="text" id="postalCode" placeholder="Masukkan kode pos Anda" />
 
@@ -77,7 +77,7 @@
     <input type="text" id="locationDetails" placeholder="Contoh: Dekat toko A, Lantai 3, Apartemen B" />
 
     <label for="namalamat">Nama Alamat:</label>
-    <input type="text" id="locationDetails" placeholder="Contoh: Rumah/Kantor/Apartemen" />
+    <input type="text" id="namalamatInput" placeholder="Contoh: Rumah/Kantor/Apartemen" />
 </div>
 
         <div class="order-summary">
@@ -141,11 +141,10 @@
 
 <script src="{% static '/dashboard.js' %}"></script>
 <script src="{% static '/cart.js' %}"></script>
-<script src="{% static '/checkout.js' %}"></script> {# Link ke file JS checkout #}
+<script src="{% static '/checkout.js' %}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    window.updateAuthUI(); // Update auth buttons/menu on page load
-    // Ensure all global listeners are attached from dashboard.js
+    window.updateAuthUI();
     window.attachGlobalListeners();
   });
 </script>

@@ -1,9 +1,9 @@
-// order_history.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Memastikan fungsi-fungsi global dari dashboard.js dimuat
-    window.updateAuthUI();
-    // Jika perlu, Anda bisa memanggil `window.setupAuthModals()` di sini
-    // jika halaman riwayat pesanan juga memiliki modal login/register yang perlu diinisialisasi.
+    // Memastikan fungsi-fungsi global dari dashboard.js tersedia dan UI autentikasi diperbarui.
+    // checkLoginStatus akan memperbarui UI header (tombol login/daftar vs menu akun)
+    if (typeof window.checkLoginStatus === 'function') {
+        window.checkLoginStatus();
+    }
 
     const orderListDiv = document.getElementById('order-list');
     const loadMoreBtn = document.getElementById('loadMoreBtn');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const returnMessage = document.getElementById('returnMessage');
 
     let ordersData = []; // Akan diisi dengan data pesanan pengguna
-    let ordersPerPage = 5;
+    const ordersPerPage = 5;
     let currentPage = 0;
     let currentOrderForReturn = null; // To store the order being returned
 
@@ -27,6 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
      * Dalam aplikasi nyata, ini akan menjadi panggilan API ke backend.
      */
     function fetchUserOrders() {
+        if (typeof window.loadUserFromLocalStorage !== 'function') {
+            console.error("window.loadUserFromLocalStorage is not defined. Please ensure dashboard.js is loaded correctly.");
+            noOrdersMessage.style.display = 'block';
+            noOrdersMessage.innerHTML = '<p class="text-danger text-center">Kesalahan: Fungsi autentikasi tidak ditemukan. Kembali ke <a href="/">Dashboard</a>.</p>';
+            orderListDiv.innerHTML = '';
+            loadMoreBtn.style.display = 'none';
+            return [];
+        }
+
         const currentUser = window.loadUserFromLocalStorage(); // Fungsi dari dashboard.js
         if (!currentUser) {
             // Pengguna belum login, tampilkan pesan dan sembunyikan elemen terkait
@@ -38,15 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const ordersKey = `orders_${currentUser.username}`;
-        // Ambil data pesanan dari localStorage. Jika tidak ada, kembalikan array kosong.
-        // Data pesanan dummy di sini untuk demonstrasi
-        let userOrders = JSON.parse(localStorage.getItem(ordersKey)) || generateDummyOrders(15);
-        
-        // Simpan kembali dummy data ke localStorage jika belum ada, agar konsisten
-        if (!localStorage.getItem(ordersKey)) {
-            localStorage.setItem(ordersKey, JSON.stringify(userOrders));
-        }
+        let userOrders = JSON.parse(localStorage.getItem(ordersKey)); // Parse langsung tanpa OR
 
+        // Logic PERBAIKAN: Jika userOrders null (belum ada di localStorage) atau array kosong,
+        // maka generate dummy data dan simpan ke localStorage.
+        if (!userOrders || userOrders.length === 0) {
+            userOrders = generateDummyOrders(15);
+            localStorage.setItem(ordersKey, JSON.stringify(userOrders)); // Simpan data dummy yang baru dibuat
+        }
+        
         // Urutkan pesanan terbaru lebih dulu (opsional, tapi bagus untuk riwayat)
         userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
         return userOrders;
@@ -107,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const orderCard = document.createElement('div');
             orderCard.classList.add('order-card');
 
-            let itemsHtml = order.items.map((item, index) => `
+            const itemsHtml = order.items.map((item) => `
                 <div class="item">
                     <span>${item.name} (${item.quantity}x)</span>
                     <span>Rp ${item.price.toLocaleString('id-ID')}</span>
@@ -134,11 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Add event listeners to newly created return buttons
-        document.querySelectorAll('.btn-return').forEach(button => {
+        // Use event delegation for more efficient handling of dynamically added buttons
+        orderListDiv.querySelectorAll('.btn-return').forEach(button => {
             button.removeEventListener('click', handleReturnButtonClick); // Prevent duplicate listeners
             button.addEventListener('click', handleReturnButtonClick);
         });
-
+        
         // Tampilkan/Sembunyikan tombol "Muat Lebih Banyak"
         if (endIndex >= ordersData.length) {
             loadMoreBtn.style.display = 'none';
@@ -155,12 +165,32 @@ document.addEventListener('DOMContentLoaded', () => {
             returnOrderIdDisplay.textContent = currentOrderForReturn.orderId;
             returnItemsList.innerHTML = ''; // Clear previous items
 
-            currentOrderForReturn.items.forEach((item, index) => {
-                if (!item.returned) { // Only show items that haven't been returned
+            const itemsToDisplayForReturn = currentOrderForReturn.items.filter(item => !item.returned);
+
+            if (itemsToDisplayForReturn.length === 0) {
+                returnMessage.textContent = 'Semua item dalam pesanan ini sudah dikembalikan.';
+                returnMessage.style.display = 'block';
+                returnMessage.style.color = 'orange';
+                // Optionally, hide the modal or disable submit if nothing to return
+                return;
+            }
+
+            itemsToDisplayForReturn.forEach((item, index) => {
+                // Find original index to mark 'returned' status correctly in ordersData
+                // This logic needs to be careful if duplicate items exist and some are already returned.
+                // For simplicity, we just take the first unreturned instance that matches.
+                const originalIndex = currentOrderForReturn.items.findIndex(originalItem => 
+                    originalItem.name === item.name && 
+                    originalItem.price === item.price && 
+                    originalItem.quantity === item.quantity &&
+                    !originalItem.returned // Ensure we target the specific unreturned item instance if duplicates exist
+                );
+                
+                if (originalIndex !== -1) {
                     const checkboxDiv = document.createElement('div');
                     checkboxDiv.innerHTML = `
                         <label>
-                            <input type="checkbox" name="returnItem" value="${index}">
+                            <input type="checkbox" name="returnItem" value="${originalIndex}">
                             ${item.name} (${item.quantity}x) - Rp ${item.price.toLocaleString('id-ID')}
                         </label>
                     `;
@@ -175,9 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listener for closing the return modal
-    closeReturnModalBtn.addEventListener('click', () => {
-        returnModal.style.display = 'none';
-    });
+    if (closeReturnModalBtn) {
+        closeReturnModalBtn.addEventListener('click', () => {
+            if (returnModal) returnModal.style.display = 'none';
+        });
+    }
 
     // Close modal when clicking outside of it
     window.addEventListener('click', (event) => {
@@ -187,70 +219,82 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle return form submission
-    returnForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+    if (returnForm) {
+        returnForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-        const reason = returnReasonInput.value.trim();
-        const selectedItems = Array.from(returnItemsList.querySelectorAll('input[name="returnItem"]:checked'))
-                               .map(checkbox => parseInt(checkbox.value));
+            const reason = returnReasonInput.value.trim();
+            const selectedItemsCheckboxes = returnItemsList.querySelectorAll('input[name="returnItem"]:checked');
+            const selectedItemsIndices = Array.from(selectedItemsCheckboxes).map(checkbox => parseInt(checkbox.value));
 
-        if (!reason) {
-            returnMessage.textContent = 'Alasan pengembalian tidak boleh kosong.';
+            if (!reason) {
+                returnMessage.textContent = 'Alasan pengembalian tidak boleh kosong.';
+                returnMessage.style.display = 'block';
+                returnMessage.style.color = 'red';
+                return;
+            }
+
+            if (selectedItemsIndices.length === 0) {
+                returnMessage.textContent = 'Pilih setidaknya satu item untuk dikembalikan.';
+                returnMessage.style.display = 'block';
+                returnMessage.style.color = 'red';
+                return;
+            }
+
+            // Simulate API call for return request
+            console.log(`Return request for Order ID: ${currentOrderForReturn.orderId}`);
+            console.log(`Reason: ${reason}`);
+            console.log('Selected Items:', selectedItemsIndices.map(index => currentOrderForReturn.items[index].name));
+
+            // Mark items as returned (for demonstration purposes in localStorage)
+            selectedItemsIndices.forEach(index => {
+                if (currentOrderForReturn && currentOrderForReturn.items[index]) {
+                    currentOrderForReturn.items[index].returned = true;
+                }
+            });
+
+            // Update the order's status if all items in the original order are returned
+            const allItemsInOrderReturned = currentOrderForReturn.items.every(item => item.returned);
+            if (allItemsInOrderReturned) {
+                currentOrderForReturn.status = 'Dikembalikan'; // New status for fully returned orders
+            }
+
+            // Save updated orders data to localStorage
+            if (typeof window.loadUserFromLocalStorage === 'function') {
+                const currentUser = window.loadUserFromLocalStorage();
+                if (currentUser) {
+                    const ordersKey = `orders_${currentUser.username}`;
+                    localStorage.setItem(ordersKey, JSON.stringify(ordersData));
+                }
+            } else {
+                 console.error("Cannot save order history: window.loadUserFromLocalStorage is not defined.");
+            }
+
+            returnMessage.textContent = 'Permintaan pengembalian Anda telah diajukan. Kami akan segera memprosesnya.';
             returnMessage.style.display = 'block';
-            returnMessage.style.color = 'red';
-            return;
-        }
+            returnMessage.style.color = 'green';
 
-        if (selectedItems.length === 0) {
-            returnMessage.textContent = 'Pilih setidaknya satu item untuk dikembalikan.';
-            returnMessage.style.display = 'block';
-            returnMessage.style.color = 'red';
-            return;
-        }
-
-        // Simulate API call for return request
-        console.log(`Return request for Order ID: ${currentOrderForReturn.orderId}`);
-        console.log(`Reason: ${reason}`);
-        console.log('Selected Items:', selectedItems.map(index => currentOrderForReturn.items[index].name));
-
-        // Mark items as returned (for demonstration purposes in localStorage)
-        selectedItems.forEach(index => {
-            currentOrderForReturn.items[index].returned = true;
+            // Clear and re-render orders after a short delay to show changes
+            setTimeout(() => {
+                if (returnModal) returnModal.style.display = 'none';
+                if (orderListDiv) orderListDiv.innerHTML = ''; // Clear current display
+                currentPage = 0; // Reset pagination
+                ordersData = fetchUserOrders(); // Re-fetch updated data
+                renderOrders(); // Render with updated data
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Permintaan pengembalian berhasil diajukan!', 'success');
+                }
+            }, 1500); // Simulate processing time
         });
-
-        // Update the order's status if all items are returned
-        const allItemsReturned = currentOrderForReturn.items.every(item => item.returned);
-        if (allItemsReturned) {
-            currentOrderForReturn.status = 'Dikembalikan'; // New status for fully returned orders
-        }
-
-        // Save updated orders data to localStorage
-        const currentUser = window.loadUserFromLocalStorage();
-        if (currentUser) {
-            const ordersKey = `orders_${currentUser.username}`;
-            localStorage.setItem(ordersKey, JSON.stringify(ordersData));
-        }
-
-        returnMessage.textContent = 'Permintaan pengembalian Anda telah diajukan. Kami akan segera memprosesnya.';
-        returnMessage.style.display = 'block';
-        returnMessage.style.color = 'green';
-
-        // Clear and re-render orders after a short delay to show changes
-        setTimeout(() => {
-            returnModal.style.display = 'none';
-            orderListDiv.innerHTML = ''; // Clear current display
-            currentPage = 0; // Reset pagination
-            ordersData = fetchUserOrders(); // Re-fetch updated data
-            renderOrders(); // Render with updated data
-            window.showToast('Permintaan pengembalian berhasil diajukan!', 'success');
-        }, 1500); // Simulate processing time
-    });
+    }
 
     // Event listener untuk tombol "Muat Lebih Banyak"
-    loadMoreBtn.addEventListener('click', () => {
-        currentPage++;
-        renderOrders();
-    });
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            renderOrders();
+        });
+    }
 
     // Inisialisasi halaman saat DOM selesai dimuat
     ordersData = fetchUserOrders();
