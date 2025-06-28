@@ -7,8 +7,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const profileNameInput = document.getElementById("profileName");
     const profileEmailInput = document.getElementById("profileEmail");
     const profilePhoneInput = document.getElementById("profilePhone");
-    const profileAddressInput = document.getElementById("profileAddress"); // Make sure this element exists in profile.html
+    const profileAddressInput = document.getElementById("profileAddress"); // This element already exists and remains.
     const profileMessage = document.getElementById("profileMessage");
+
+    // New address fields to be added
+    const profileReceiverNameInput = document.getElementById("profileReceiverName");
+    const profileReceiverPhoneInput = document.getElementById("profileReceiverPhone");
+    const profileFullAddressInput = document.getElementById("profileFullAddress");
+    const profileRtRwInput = document.getElementById("profileRtRw");
+    const profileProvinceInput = document.getElementById("profileProvince");
+    const profileKabupatenInput = document.getElementById("profileKabupaten");
+    const profileCityInput = document.getElementById("profileCity");
+    const profilePostalCodeInput = document.getElementById("profilePostalCode");
+    const profileLocationDetailsInput = document.getElementById("profileLocationDetails");
+    const profileNamaAlamatInput = document.getElementById("profileNamaAlamat");
+
 
     /**
      * Loads user profile data from the backend and populates the form.
@@ -47,7 +60,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 profileNameInput.value = data.name || '';
                 profileEmailInput.value = data.email || '';
                 profilePhoneInput.value = data.phone || '';
-                profileAddressInput.value = data.address || ''; // Ensure 'address' field exists in your Django UserProfile/User model and API response
+                profileAddressInput.value = data.address || ''; // Existing address field
+
+                // Populate new address fields
+                profileReceiverNameInput.value = data.receiver_name || '';
+                profileReceiverPhoneInput.value = data.receiver_phone || '';
+                profileFullAddressInput.value = data.full_address || '';
+                profileRtRwInput.value = data.rt_rw || '';
+                profileProvinceInput.value = data.province || '';
+                profileKabupatenInput.value = data.kabupaten || '';
+                profileCityInput.value = data.city || '';
+                profilePostalCodeInput.value = data.postal_code || '';
+                profileLocationDetailsInput.value = data.location_details || '';
+                profileNamaAlamatInput.value = data.nama_alamat || '';
+
                 window.showToast("Profil berhasil dimuat.", "success");
             } else {
                 if (profileMessage) profileMessage.textContent = data.message || "Gagal memuat profil.";
@@ -82,7 +108,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 name: profileNameInput.value.trim(),
                 email: profileEmailInput.value.trim(),
                 phone: profilePhoneInput.value.trim(),
-                address: profileAddressInput.value.trim()
+                address: profileAddressInput.value.trim(), // Existing address field
+                // New address fields to be sent to backend
+                receiver_name: profileReceiverNameInput.value.trim(),
+                receiver_phone: profileReceiverPhoneInput.value.trim(),
+                full_address: profileFullAddressInput.value.trim(),
+                rt_rw: profileRtRwInput.value.trim(),
+                province: profileProvinceInput.value.trim(),
+                kabupaten: profileKabupatenInput.value.trim(),
+                city: profileCityInput.value.trim(),
+                postal_code: profilePostalCodeInput.value.trim(),
+                location_details: profileLocationDetailsInput.value.trim(),
+                nama_alamat: profileNamaAlamatInput.value.trim()
             };
 
             try {

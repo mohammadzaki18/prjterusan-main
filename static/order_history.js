@@ -27,7 +27,31 @@ document.addEventListener('DOMContentLoaded', () => {
      * Dalam aplikasi nyata, ini akan menjadi panggilan API ke backend.
      */
     function fetchUserOrders() {
-        if (typeof window.loadUserFromLocalStorage !== 'function') {
+        if (typeof window.loadUserFromLocalStorage === 'function') {
+            const currentUser = window.loadUserFromLocalStorage();
+            if (!currentUser) {
+                // Pengguna belum login, tampilkan pesan dan sembunyikan elemen terkait
+                noOrdersMessage.style.display = 'block';
+                noOrdersMessage.innerHTML = '<p class="text-secondary text-center">Anda harus login untuk melihat riwayat pesanan. Kembali ke <a href="/">Dashboard</a>.</p>';
+                orderListDiv.innerHTML = ''; // Pastikan tidak ada konten sebelumnya
+                loadMoreBtn.style.display = 'none';
+                return [];
+            }
+
+            const ordersKey = `orders_${currentUser.username}`;
+            let userOrders = JSON.parse(localStorage.getItem(ordersKey));
+
+            // Logic PERBAIKAN: Jika userOrders null (belum ada di localStorage) atau array kosong,
+            // maka generate dummy data dan simpan ke localStorage.
+            if (!userOrders || userOrders.length === 0) {
+                userOrders = generateDummyOrders(15);
+                localStorage.setItem(ordersKey, JSON.stringify(userOrders)); // Simpan data dummy yang baru dibuat
+            }
+            
+            // Urutkan pesanan terbaru lebih dulu (opsional, tapi bagus untuk riwayat)
+            userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            return userOrders;
+        } else {
             console.error("window.loadUserFromLocalStorage is not defined. Please ensure dashboard.js is loaded correctly.");
             noOrdersMessage.style.display = 'block';
             noOrdersMessage.innerHTML = '<p class="text-danger text-center">Kesalahan: Fungsi autentikasi tidak ditemukan. Kembali ke <a href="/">Dashboard</a>.</p>';
@@ -35,30 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loadMoreBtn.style.display = 'none';
             return [];
         }
-
-        const currentUser = window.loadUserFromLocalStorage(); // Fungsi dari dashboard.js
-        if (!currentUser) {
-            // Pengguna belum login, tampilkan pesan dan sembunyikan elemen terkait
-            noOrdersMessage.style.display = 'block';
-            noOrdersMessage.innerHTML = '<p class="text-secondary text-center">Anda harus login untuk melihat riwayat pesanan. Kembali ke <a href="/">Dashboard</a>.</p>';
-            orderListDiv.innerHTML = ''; // Pastikan tidak ada konten sebelumnya
-            loadMoreBtn.style.display = 'none';
-            return [];
-        }
-
-        const ordersKey = `orders_${currentUser.username}`;
-        let userOrders = JSON.parse(localStorage.getItem(ordersKey)); // Parse langsung tanpa OR
-
-        // Logic PERBAIKAN: Jika userOrders null (belum ada di localStorage) atau array kosong,
-        // maka generate dummy data dan simpan ke localStorage.
-        if (!userOrders || userOrders.length === 0) {
-            userOrders = generateDummyOrders(15);
-            localStorage.setItem(ordersKey, JSON.stringify(userOrders)); // Simpan data dummy yang baru dibuat
-        }
-        
-        // Urutkan pesanan terbaru lebih dulu (opsional, tapi bagus untuk riwayat)
-        userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-        return userOrders;
     }
 
     // Fungsi dummy untuk menghasilkan data pesanan palsu (mirip dengan yang di awal)
@@ -76,7 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const orderDateFormatted = date.toLocaleDateString('id-ID', {
                 year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
-            const status = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+            
+            let status;
+            if (i < 3) { // Pastikan 3 pesanan pertama selalu 'Selesai'
+                status = 'Selesai';
+            } else {
+                status = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+            }
 
             const numItems = Math.floor(Math.random() * 3) + 1; // 1 to 3 items per order
             const items = [];
@@ -120,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="item">
                     <span>${item.name} (${item.quantity}x)</span>
                     <span>Rp ${item.price.toLocaleString('id-ID')}</span>
+                    ${item.returned ? '<span class="status-badge returned-item-badge">Dikembalikan</span>' : ''}
                 </div>
             `).join('');
 
@@ -127,6 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const allItemsReturned = order.items.every(item => item.returned);
             const returnButtonHtml = (order.status === 'Selesai' && !allItemsReturned) ?
                 `<button class="btn btn-return" data-order-id="${order.orderId}">Ajukan Pengembalian</button>` : '';
+            
+            // Buy Again button - always available
+            const buyAgainButtonHtml = `<button class="btn btn-buy-again" data-order-id="${order.orderId}">Beli Lagi</button>`;
 
             orderCard.innerHTML = `
                 <h3>Pesanan #${order.orderId}</h3>
@@ -137,16 +147,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${itemsHtml}
                 </div>
                 <p class="total">Total Pesanan: Rp ${order.total.toLocaleString('id-ID')}</p>
-                ${returnButtonHtml}
+                <div class="order-actions">
+                    ${returnButtonHtml}
+                    ${buyAgainButtonHtml}
+                </div>
             `;
             orderListDiv.appendChild(orderCard);
         });
 
         // Add event listeners to newly created return buttons
-        // Use event delegation for more efficient handling of dynamically added buttons
         orderListDiv.querySelectorAll('.btn-return').forEach(button => {
             button.removeEventListener('click', handleReturnButtonClick); // Prevent duplicate listeners
             button.addEventListener('click', handleReturnButtonClick);
+        });
+
+        // Add event listeners to newly created buy again buttons
+        orderListDiv.querySelectorAll('.btn-buy-again').forEach(button => {
+            button.removeEventListener('click', handleBuyAgainButtonClick); // Prevent duplicate listeners
+            button.addEventListener('click', handleBuyAgainButtonClick);
         });
         
         // Tampilkan/Sembunyikan tombol "Muat Lebih Banyak"
@@ -201,6 +219,39 @@ document.addEventListener('DOMContentLoaded', () => {
             returnReasonInput.value = ''; // Clear previous reason
             returnMessage.style.display = 'none'; // Hide any previous messages
             returnModal.style.display = 'flex'; // Use flex to center the modal
+        }
+    }
+
+    function handleBuyAgainButtonClick(event) {
+        const orderId = event.target.dataset.orderId;
+        const orderToReorder = ordersData.find(order => order.orderId === orderId);
+
+        if (orderToReorder) {
+            // Simulate adding items to cart
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            orderToReorder.items.forEach(item => {
+                const existingItemIndex = cart.findIndex(cartItem => cartItem.name === item.name);
+                if (existingItemIndex > -1) {
+                    cart[existingItemIndex].quantity += item.quantity;
+                } else {
+                    // Add a dummy image URL. In a real application, this would come from product data.
+                    // For demonstration, we use a placeholder image.
+                    cart.push({ ...item, image: 'https://via.placeholder.com/50' }); 
+                }
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Trigger cart UI update if a function exists in dashboard.js
+            if (typeof window.updateCartUI === 'function') {
+                window.updateCartUI(); 
+            }
+
+            // Show a toast notification
+            if (typeof window.showToast === 'function') {
+                window.showToast('Produk dari pesanan ini telah ditambahkan ke keranjang!', 'success');
+            }
+            console.log(`Order ${orderId} items added to cart for re-purchase.`);
         }
     }
 
