@@ -966,7 +966,8 @@ footer {
 
 .shipping-address,
 .order-summary,
-.payment-method {
+.payment-method,
+.saved-addresses { /* Tambahkan .saved-addresses */
     background: #f8f9fa;
     padding: 25px;
     border-radius: 8px;
@@ -975,7 +976,8 @@ footer {
 
 .shipping-address h3,
 .order-summary h3,
-.payment-method h3 {
+.payment-method h3,
+.saved-addresses h3 { /* Tambahkan .saved-addresses h3 */
     color: #28a745; /* Green for minimarket theme */
     font-size: 22px;
     margin-bottom: 20px;
@@ -994,7 +996,8 @@ footer {
 .shipping-address input[type="text"],
 .shipping-address input[type="tel"], /* Tambahkan ini untuk input tel */
 .shipping-address textarea,
-.payment-method select {
+.payment-method select,
+.saved-addresses select { /* Tambahkan .saved-addresses select */
     width: 100%;
     padding: 12px 15px;
     margin-bottom: 15px;
@@ -1009,7 +1012,8 @@ footer {
 .shipping-address input[type="text"]:focus,
 .shipping-address input[type="tel"]:focus, /* Tambahkan ini untuk input tel */
 .shipping-address textarea:focus,
-.payment-method select:focus {
+.payment-method select:focus,
+.saved-addresses select:focus { /* Tambahkan .saved-addresses select:focus */
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     outline: none;
@@ -1062,6 +1066,300 @@ footer {
     margin-top: 20px;
     padding-top: 15px;
     border-top: 2px solid #28a745;
+}
+
+/*ORDER SUCCESS.css*/
+.success-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 700px;
+    margin: 50px auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.success-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 25px;
+}
+
+.success-container h2 {
+    color: #28a745; /* Success green */
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.success-container p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.order-details-summary {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+.order-details-summary h3 {
+    font-size: 22px;
+    color: #343a40;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.order-details-summary div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.order-details-summary div span:first-child {
+    color: #6c757d;
+}
+
+.order-details-summary div span:last-child {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.order-details-summary .total-price {
+    font-weight: 700;
+    color: #28a745;
+    font-size: 20px;
+}
+
+.success-actions .btn {
+    margin: 0 10px;
+    width: auto;
+    padding: 12px 25px;
+}
+
+@media (max-width: 576px) {
+    .success-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .success-actions .btn {
+        width: 100%;
+    }
+}
+
+/*ORDER SUCCESS.css*/
+.success-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 700px;
+    margin: 50px auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.success-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 25px;
+}
+
+.success-container h2 {
+    color: #28a745; /* Success green */
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.success-container p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.order-details-summary {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+.order-details-summary h3 {
+    font-size: 22px;
+    color: #343a40;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.order-details-summary div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.order-details-summary div span:first-child {
+    color: #6c757d;
+}
+
+.order-details-summary div span:last-child {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.order-details-summary .total-price {
+    font-weight: 700;
+    color: #28a745;
+    font-size: 20px;
+}
+
+.success-actions .btn {
+    margin: 0 10px;
+    width: auto;
+    padding: 12px 25px;
+}
+
+@media (max-width: 576px) {
+    .success-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .success-actions .btn {
+        width: 100%;
+    }
+}
+
+/*ORDER SUCCESS.css*/
+.success-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 700px;
+    margin: 50px auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.success-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 25px;
+}
+
+.success-container h2 {
+    color: #28a745; /* Success green */
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.success-container p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+.order-details-summary {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+.order-details-summary h3 {
+    font-size: 22px;
+    color: #343a40;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.order-details-summary div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.order-details-summary div span:first-child {
+    color: #6c757d;
+}
+
+.order-details-summary div span:last-child {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.order-details-summary .total-price {
+    font-weight: 700;
+    color: #28a745;
+    font-size: 20px;
+}
+
+.success-actions .btn {
+    margin: 0 10px;
+    width: auto;
+    padding: 12px 25px;
+}
+
+@media (max-width: 576px) {
+    .success-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .success-actions .btn {
+        width: 100%;
+    }
 }
 
 /*ORDER SUCCESS.css*/

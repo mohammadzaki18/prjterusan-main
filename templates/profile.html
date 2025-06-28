@@ -61,15 +61,14 @@
             <label for="profilePhone">Nomor Telepon:</label>
             <input type="tel" id="profilePhone">
 
-            <label for="profileAddress">Alamat (Alamat Utama Profil):</label>
-            <textarea id="profileAddress" rows="3"></textarea>
+            <hr style="margin: 20px 0;">
+            <h3>Alamat Utama Profil</h3>
 
-            <h3>Detail Alamat Pengiriman Tambahan</h3>
             <label for="profileReceiverName">Nama Penerima:</label>
-            <input type="text" id="profileReceiverName" placeholder="Masukkan nama penerima" />
+            <input type="text" id="profileReceiverName" placeholder="Masukkan nama penerima">
 
             <label for="profileReceiverPhone">Nomor Telepon Penerima:</label>
-            <input type="tel" id="profileReceiverPhone" placeholder="Masukkan nomor telepon penerima" />
+            <input type="tel" id="profileReceiverPhone" placeholder="Masukkan nomor telepon penerima">
 
             <label for="profileFullAddress">Alamat Lengkap Pengiriman:</label>
             <textarea id="profileFullAddress" rows="4" placeholder="Contoh: Nama Jalan, Nomor Rumah/Gedung, RT/RW"></textarea>
@@ -92,10 +91,21 @@
             <label for="profileLocationDetails">Keterangan Detail Lokasi:</label>
             <input type="text" id="profileLocationDetails" placeholder="Contoh: Dekat toko A, Lantai 3, Apartemen B" />
 
-            <label for="profileNamaAlamat">Nama Alamat (untuk Alamat Pengiriman ini):</label>
+            <label for="profileNamaAlamat">Nama Alamat (untuk Alamat Utama Profil ini):</label>
             <input type="text" id="profileNamaAlamat" placeholder="Contoh: Rumah/Kantor/Apartemen" />
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+
+
+            <button type="submit" class="btn btn-primary">Simpan Perubahan Profil</button>
+            <p id="profileMessage" class="error-message"></p>
         </form>
+
+        <hr style="margin: 30px 0;">
+
+        <h2>Daftar Alamat Pengiriman Lainnya</h2>
+        <button type="button" class="btn btn-primary" id="btnAddAddress">Tambahkan Alamat Baru</button>
+        <div id="addressesList" class="addresses-list">
+            </div>
+        <p id="addressMessage" class="error-message"></p>
     </div>
 </main>
 
@@ -104,6 +114,47 @@
 </footer>
 
 <div class="toast" id="toast"></div>
+
+<div id="addressModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeAddressModal">&times;</span>
+        <h2 id="addressModalTitle">Tambahkan Alamat Baru</h2>
+        <form id="addressForm">
+            <input type="hidden" id="addressId">
+            <label for="addressReceiverName">Nama Penerima:</label>
+            <input type="text" id="addressReceiverName" placeholder="Masukkan nama penerima" required/>
+
+            <label for="addressReceiverPhone">Nomor Telepon Penerima:</label>
+            <input type="tel" id="addressReceiverPhone" placeholder="Masukkan nomor telepon penerima" required/>
+
+            <label for="addressFullAddress">Alamat Lengkap Pengiriman:</label>
+            <textarea id="addressFullAddress" rows="4" placeholder="Contoh: Nama Jalan, Nomor Rumah/Gedung, RT/RW" required></textarea>
+
+            <label for="addressRtRw">RT/RW:</label>
+            <input type="text" id="addressRtRw" placeholder="Contoh: 001/002" />
+
+            <label for="addressProvince">Provinsi:</label>
+            <input type="text" id="addressProvince" placeholder="Masukkan provinsi Anda" required/>
+
+            <label for="addressKabupaten">Kabupaten/Kota:</label>
+            <input type="text" id="addressKabupaten" placeholder="Masukkan kabupaten atau kota Anda" required/>
+
+            <label for="addressCity">Kecamatan:</label>
+            <input type="text" id="addressCity" placeholder="Masukkan kecamatan Anda" required/>
+
+            <label for="addressPostalCode">Kode Pos:</label>
+            <input type="text" id="addressPostalCode" placeholder="Masukkan kode pos Anda" required/>
+
+            <label for="addressLocationDetails">Keterangan Detail Lokasi:</label>
+            <input type="text" id="addressLocationDetails" placeholder="Contoh: Dekat toko A, Lantai 3, Apartemen B" />
+
+            <label for="addressNamaAlamat">Nama Alamat (untuk Alamat Pengiriman ini):</label>
+            <input type="text" id="addressNamaAlamat" placeholder="Contoh: Rumah/Kantor/Apartemen" required/>
+            <button type="submit" class="btn btn-primary" id="btnSaveAddress">Simpan Alamat</button>
+            <p id="addressFormMessage" class="error-message"></p>
+        </form>
+    </div>
+</div>
 
 <div id="authModal" class="modal">
   <div class="modal-content">
@@ -141,6 +192,8 @@
   </div>
 </div>
 
-<script src="{% static '/dashboard.js' %}"></script> <script src="{% static '/profile.js' %}"></script>
+<script src="{% static '/dashboard.js' %}"></script>
+<script src="{% static '/profile.js' %}"></script>
+<script src="{% static '/checkout.js' %}"></script>
 </body>
 </html>

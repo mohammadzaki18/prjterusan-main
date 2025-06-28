@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentMethodSelect = document.getElementById('paymentMethod');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
+    // Elemen DOM baru untuk fitur alamat tersimpan
+    const savedAddressesSection = document.getElementById('savedAddressesSection');
+    const savedAddressSelect = document.getElementById('savedAddressSelect');
+    const useNewAddressBtn = document.getElementById('useNewAddressBtn');
+
     // Biaya pengiriman yang konsisten, diasumsikan dalam IDR
     const SHIPPING_COST = 15000;
 
@@ -59,8 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (checkoutShippingElem) checkoutShippingElem.textContent = 'Rp 0';
             if (checkoutTotalElem) checkoutTotalElem.textContent = 'Rp 0';
             if (placeOrderBtn) placeOrderBtn.disabled = true;
+            if (savedAddressesSection) savedAddressesSection.style.display = 'none'; // Sembunyikan pilihan alamat tersimpan
             return; // Hentikan eksekusi fungsi
         }
+
+        // Tampilkan bagian alamat tersimpan jika pengguna sudah login
+        if (savedAddressesSection) savedAddressesSection.style.display = 'block';
 
         const cartKey = `cart_${currentUser.username}`;
         let cart = JSON.parse(localStorage.getItem(cartKey)) || []; // Memuat keranjang spesifik pengguna
@@ -122,8 +131,94 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('lastOrderTotal', totalAmount);
     }
 
+    /**
+     * Mengisi dropdown alamat tersimpan dengan data dari user.
+     */
+    function populateSavedAddresses() {
+        const currentUser = window.loadUserFromLocalStorage();
+        if (currentUser && currentUser.addresses && savedAddressSelect) {
+            // Bersihkan opsi yang sudah ada kecuali opsi default
+            savedAddressSelect.innerHTML = '<option value="">-- Pilih Alamat --</option>';
+
+            currentUser.addresses.forEach((address, index) => {
+                const option = document.createElement('option');
+                option.value = index; // Gunakan indeks sebagai nilai untuk memudahkan pengambilan objek alamat
+                option.textContent = address.name || `Alamat ${index + 1}`; // Tampilkan Nama Alamat atau default
+                savedAddressSelect.appendChild(option);
+            });
+            // Jika ada alamat tersimpan, tampilkan bagian ini
+            if (currentUser.addresses.length > 0) {
+                savedAddressesSection.style.display = 'block';
+            } else {
+                savedAddressesSection.style.display = 'none';
+            }
+        } else if (savedAddressesSection) {
+            savedAddressesSection.style.display = 'none'; // Sembunyikan jika tidak ada user atau alamat
+        }
+    }
+
+    /**
+     * Mengisi form alamat pengiriman dengan data dari alamat yang dipilih.
+     * @param {Object} address - Objek alamat yang akan diisi ke form.
+     */
+    function fillAddressForm(address) {
+        if (!address) {
+            clearAddressForm();
+            return;
+        }
+        if (receiverNameInput) receiverNameInput.value = address.receiverName || '';
+        if (receiverPhoneInput) receiverPhoneInput.value = address.receiverPhone || '';
+        if (addressInput) addressInput.value = address.address || '';
+        if (cityInput) cityInput.value = address.city || '';
+        if (kabupatenInput) kabupatenInput.value = address.kabupaten || '';
+        if (provinceInput) provinceInput.value = address.province || '';
+        if (postalCodeInput) postalCodeInput.value = address.postalCode || '';
+        if (rtRwInput) rtRwInput.value = address.rtRw || '';
+        if (locationDetailsInput) locationDetailsInput.value = address.locationDetails || '';
+        if (namalamatInput) namalamatInput.value = address.name || ''; // Mengisi Nama Alamat
+    }
+
+    /**
+     * Mengosongkan form alamat pengiriman.
+     */
+    function clearAddressForm() {
+        if (receiverNameInput) receiverNameInput.value = '';
+        if (receiverPhoneInput) receiverPhoneInput.value = '';
+        if (addressInput) addressInput.value = '';
+        if (cityInput) cityInput.value = '';
+        if (kabupatenInput) kabupatenInput.value = '';
+        if (provinceInput) provinceInput.value = '';
+        if (postalCodeInput) postalCodeInput.value = '';
+        if (rtRwInput) rtRwInput.value = '';
+        if (locationDetailsInput) locationDetailsInput.value = '';
+        if (namalamatInput) namalamatInput.value = '';
+    }
+
     // Panggil fungsi render ringkasan saat halaman dimuat pertama kali
     renderCheckoutSummary();
+    populateSavedAddresses(); // Panggil juga untuk mengisi alamat tersimpan
+
+    // --- Event Listener untuk Dropdown Alamat Tersimpan ---
+    if (savedAddressSelect) {
+        savedAddressSelect.addEventListener('change', (event) => {
+            const selectedIndex = event.target.value;
+            const currentUser = window.loadUserFromLocalStorage();
+            if (selectedIndex !== "" && currentUser && currentUser.addresses) {
+                const selectedAddress = currentUser.addresses[parseInt(selectedIndex)];
+                fillAddressForm(selectedAddress);
+            } else {
+                clearAddressForm(); // Kosongkan form jika opsi default dipilih
+            }
+        });
+    }
+
+    // --- Event Listener untuk Tombol "Gunakan Alamat Baru" ---
+    if (useNewAddressBtn) {
+        useNewAddressBtn.addEventListener('click', () => {
+            clearAddressForm();
+            if (savedAddressSelect) savedAddressSelect.value = ""; // Reset dropdown
+        });
+    }
 
     // --- Event Listener untuk Tombol "Konfirmasi Pembayaran" ---
     if (placeOrderBtn) {

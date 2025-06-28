@@ -47,38 +47,45 @@
 <main>
     <h2>Pembayaran</h2>
     <div class="checkout-container">
+        <div class="saved-addresses" id="savedAddressesSection" style="display: none;">
+            <h3>Pilih Alamat Tersimpan</h3>
+            <select id="savedAddressSelect">
+                <option value="">-- Pilih Alamat --</option>
+            </select>
+            <button id="useNewAddressBtn" class="btn btn-sm btn-outline-secondary" style="margin-top: 10px;">Gunakan Alamat Baru</button>
+        </div>
         <div class="shipping-address">
-    <h3>Alamat Pengiriman</h3>
-    <label for="receiverName">Nama Penerima:</label>
-    <input type="text" id="receiverName" placeholder="Masukkan nama penerima" />
+            <h3>Alamat Pengiriman</h3>
+            <label for="receiverName">Nama Penerima:</label>
+            <input type="text" id="receiverName" placeholder="Masukkan nama penerima" />
 
-    <label for="receiverPhone">Nomor Telepon Penerima:</label>
-    <input type="tel" id="receiverPhone" placeholder="Masukkan nomor telepon penerima" />
+            <label for="receiverPhone">Nomor Telepon Penerima:</label>
+            <input type="tel" id="receiverPhone" placeholder="Masukkan nomor telepon penerima" />
 
-    <label for="address">Alamat Lengkap:</label>
-    <textarea id="address" rows="4" placeholder="Contoh: Nama Jalan, Nomor Rumah/Gedung, RT/RW"></textarea>
+            <label for="address">Alamat Lengkap:</label>
+            <textarea id="address" rows="4" placeholder="Contoh: Nama Jalan, Nomor Rumah/Gedung, RT/RW"></textarea>
 
-    <label for="rtRw">RT/RW:</label>
-    <input type="text" id="rtRw" placeholder="Contoh: 001/002" />
+            <label for="rtRw">RT/RW:</label>
+            <input type="text" id="rtRw" placeholder="Contoh: 001/002" />
 
-    <label for="province">Provinsi:</label>
-    <input type="text" id="province" placeholder="Masukkan provinsi Anda" />
+            <label for="province">Provinsi:</label>
+            <input type="text" id="province" placeholder="Masukkan provinsi Anda" />
 
-    <label for="kabupaten">Kabupaten/Kota:</label>
-    <input type="text" id="kabupaten" placeholder="Masukkan kabupaten atau kota Anda" />
+            <label for="kabupaten">Kabupaten/Kota:</label>
+            <input type="text" id="kabupaten" placeholder="Masukkan kabupaten atau kota Anda" />
 
-    <label for="city">Kecamatan:</label>
-    <input type="text" id="city" placeholder="Masukkan kecamatan Anda" />
+            <label for="city">Kecamatan:</label>
+            <input type="text" id="city" placeholder="Masukkan kecamatan Anda" />
 
-    <label for="postalCode">Kode Pos:</label>
-    <input type="text" id="postalCode" placeholder="Masukkan kode pos Anda" />
+            <label for="postalCode">Kode Pos:</label>
+            <input type="text" id="postalCode" placeholder="Masukkan kode pos Anda" />
 
-    <label for="locationDetails">Keterangan Detail Lokasi:</label>
-    <input type="text" id="locationDetails" placeholder="Contoh: Dekat toko A, Lantai 3, Apartemen B" />
+            <label for="locationDetails">Keterangan Detail Lokasi:</label>
+            <input type="text" id="locationDetails" placeholder="Contoh: Dekat toko A, Lantai 3, Apartemen B" />
 
-    <label for="namalamat">Nama Alamat:</label>
-    <input type="text" id="namalamatInput" placeholder="Contoh: Rumah/Kantor/Apartemen" />
-</div>
+            <label for="namalamat">Nama Alamat:</label>
+            <input type="text" id="namalamatInput" placeholder="Contoh: Rumah/Kantor/Apartemen" />
+        </div>
 
         <div class="order-summary">
             <h3>Ringkasan Pesanan</h3>
