@@ -17,6 +17,8 @@ urlpatterns = [
     path('return_req/', views.return_req, name='return'),
     path('admin_dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('admin_login/', views.admin_login_view, name='admin_login'),
+    path('payment_accounts/', views.payment_accounts_view, name='payment'),
+    path('confirmation_payment/', views.confirmation_payment_view, name='confirmation_payment'),
 
     path('api/get_current_user/', views.get_current_user, name='get_current_user'),
     # New Authentication URLs

@@ -58,6 +58,12 @@ def tutorial(request):
 def return_req(request):
     return render(request, 'return_req.html')
 
+def payment_accounts_view (request):
+    return render(request, 'payment_accounts.html')
+
+def confirmation_payment_view (request):
+    return render(request, 'confirm_payment.html')
+
 #Login, Regis,dan OTP
 @csrf_exempt # For development, remove and implement proper CSRF for production AJAX
 def login_user(request):

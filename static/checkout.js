@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Arahkan pengguna ke halaman sukses pembayaran setelah jeda singkat
             setTimeout(() => {
-                window.location.href = placeOrderBtn.dataset.successUrl || '/order-success/';
+                window.location.href = placeOrderBtn.dataset.successUrl || '/payment_accounts/';
             }, 1500); // Tunda 1.5 detik agar toast bisa terlihat
         });
     }
