@@ -6,12 +6,12 @@ console.log("dashboard.js loaded");
 window.products = [
   {
     id: 1,
-    name: "Beras Premium",
+    name: "Beras Raja Platinum",
     price: 12000,
     description:
       "Beras kualitas premium 5kg. Beras ini dipilih dari varietas terbaik, diolah dengan teknologi modern untuk menghasilkan bulir beras yang utuh dan bersih. Cocok untuk konsumsi sehari-hari keluarga.",
     category: "Kebutuhan Pokok",
-    image: "https://cdn-icons-png.flaticon.com/512/1256/1256425.png",
+    image: "https://c.alfagift.id/product/1/1_A6899450001022_20250206155940934_base.jpg",
     stock: 50,
   },
   {
@@ -21,7 +21,7 @@ window.products = [
     description:
       "Minyak goreng kemasan 1L. Terbuat dari kelapa sawit pilihan, kaya akan Vitamin A dan D. Ideal untuk menggoreng dan menumis, memberikan rasa gurih pada masakan Anda.",
     category: "Kebutuhan Pokok",
-    image: "https://cdn-icons-png.flaticon.com/512/2938/2938499.png",
+    image: "https://c.alfagift.id/product/1/1_A09350001879_20211001113946725_base.jpg",
     stock: 30,
   },
   {
@@ -29,9 +29,9 @@ window.products = [
     name: "Susu UHT",
     price: 8000,
     description:
-      "Susu UHT rasa coklat 200ml. Susu siap minum dengan rasa coklat yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
+      "Susu UHT rasa vanilla 200ml. Susu siap minum dengan rasa vanilla yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
     category: "Minuman",
-    image: "https://cdn-icons-png.flaticon.com/512/2739/2739178.png",
+    image: "https://c.alfagift.id/product/1/1_A7671640001094_20230705095812479_base.jpg",
     stock: 100,
   },
   {
@@ -41,7 +41,7 @@ window.products = [
     description:
       "Telur ayam negeri 1 lusin. Sumber protein hewani yang murah dan mudah didapat. Cocok untuk berbagai olahan masakan.",
     category: "Kebutuhan Pokok",
-    image: "https://cdn-icons-png.flaticon.com/512/3209/3209028.png",
+    image: "https://image.astronauts.cloud/product-images/2024/9/WhatsAppImage20240926at16_0ead3922-2d89-45d9-9ccf-eb1b45fbf003_900x900.jpg",
     stock: 20,
   },
   {
@@ -51,7 +51,7 @@ window.products = [
     description:
       "Kopi instan sachet. Praktis untuk dinikmati kapan saja. Rasakan sensasi kopi nikmat di setiap tegukan.",
     category: "Minuman",
-    image: "https://cdn-icons-png.flaticon.com/512/924/924765.png",
+    image: "https://images.tokopedia.net/img/cache/700/hDjmkQ/2025/1/9/2f90cacd-02e2-4b76-b123-bec878e9fca0.jpg",
     stock: 75,
   },
   {
@@ -59,9 +59,9 @@ window.products = [
     name: "Sabun Mandi",
     price: 7000,
     description:
-      "Sabun mandi batangan dengan aroma lavender. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
+      "Sabun mandi cair dengan aroma. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
     category: "Perlengkapan Mandi",
-    image: "https://cdn-icons-png.flaticon.com/512/3035/3035974.png",
+    image: "https://assets.unileversolutions.com/v1/101677433.png",
     stock: 40,
   },
   {
@@ -71,37 +71,37 @@ window.products = [
     description:
       "Pasta gigi dengan formula perlindungan total. Melindungi gigi dari gigi berlubang dan bau mulut. Nafas segar sepanjang hari.",
     category: "Perlengkapan Mandi",
-    image: "https://cdn-icons-png.flaticon.com/512/575/575314.png",
+    image: "https://allofresh.id/blog/wp-content/uploads/2023/11/merek-pasta-gigi-2.jpg",
     stock: 60,
   },
   {
     id: 8,
-    name: "Deterjen Pakaian",
-    price: 25000,
+    name: "Le minerale",
+    price: 5000,
     description:
-      "Deterjen bubuk konsentrat 500g. Membersihkan pakaian lebih bersih dan efektif. Pakaian wangi dan bebas noda membandel.",
-    category: "Pembersih Rumah",
-    image: "https://cdn-icons-png.flaticon.com/512/2553/2553655.png",
+      "Minuman air mineral menyegarkan.",
+    category: "Minuman",
+    image: "https://media.monotaro.id/mid01/big/Perlengkapan%20Dapur%20%26%20Horeka/Minuman/Minuman%20Ringan/Le%20Minerale%20Air%20Mineral%20Botol/Le%20Minerale%20Air%20Mineral%20Botol%201500ml%201carton(12pcs)/9hS029483341-1.jpg",
     stock: 25,
   },
   {
     id: 9,
-    name: "Obat Nyamuk Semprot",
-    price: 18000,
+    name: "Fruitea",
+    price: 63000,
     description:
-      "Obat nyamuk semprot efektif usir nyamuk dan serangga. Perlindungan maksimal untuk keluarga. Aman digunakan di dalam ruangan.",
-    category: "Pembersih Rumah",
-    image: "https://cdn-icons-png.flaticon.com/512/488/488737.png",
+      "Minuman teh rasa 200ml kemasan, 1 Kardus isi 24.",
+    category: "Minuman",
+    image: "https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/106/MTA-179476324/fruit_tea_fruit_tea_genggam_200_ml_1_dus_teh_rasa_buah_segar_fruitea_sosro_full04_3265af49.jpg",
     stock: 35,
   },
   {
     id: 10,
-    name: "Snack Kentang",
+    name: "Teh Pucuk",
     price: 8500,
     description:
-      "Snack kentang renyah dengan rasa balado. Cocok untuk camilan saat bersantai. Teman ngopi yang pas.",
-    category: "Camilan",
-    image: "https://cdn-icons-png.flaticon.com/512/820/820150.png",
+      "Teh Pucuk botolan.",
+    category: "Minuman",
+    image: "https://solvent-production.s3.amazonaws.com/media/images/products/2021/06/DSC_0109_copy_I7mT4F6.jpg",
     stock: 80,
   },
 ];
