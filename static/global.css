@@ -7,11 +7,11 @@
 }
 
 body {
-  background: #f8f9fa; /* Light gray background */
+  background: #f8f9fa;
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Ini penting untuk sticky footer */
-  color: #212529; /* Darker text for readability */
+  flex-direction: column;
+  color: #212529;
   line-height: 1.6;
 }
 
@@ -21,7 +21,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #343a40; /* Slightly darker headings */
+  color: #343a40;
   margin-bottom: 0.5em;
   font-weight: 600;
 }
@@ -2620,7 +2620,7 @@ h3 {
     position: relative;
 }
 
-/* Bagian untuk garis bawah (pseudo-element ::after) */
+
 #shop-payment-page .payment-info-section h3::after {
     content: '';
     display: block;
