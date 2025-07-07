@@ -137,4 +137,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'haikalbyan44@gmail.com' 
 EMAIL_HOST_PASSWORD = 'tjox mjmb lotn eedk' 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 # Jika Anda menggunakan akun pengirim email lain (misal Mailgun, SendGrid), sesuaikan konfigurasinya.

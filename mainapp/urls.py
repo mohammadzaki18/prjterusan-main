@@ -1,7 +1,8 @@
 # products/urls.py
 
 from django.urls import path
-
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -26,8 +27,13 @@ urlpatterns = [
     path('api/login/', views.login_user, name='login'),
     path('api/send_otp/', views.send_otp, name='send_otp'),
     path('api/verify_otp/', views.verify_otp, name='verify_otp'),
-    path('logout/', views.user_logout, name='logout'), # Add a logout URL
+    path('api/logout/', views.user_logout, name='logout'), # Add a logout URL
     path('api/cart/add/', views.add_to_cart, name='add_to_cart'),
     path('api/cart/', views.get_cart_items, name='get_cart'),
     path('api/cart/remove/<int:product_id>/', views.remove_cart_item, name='remove_cart_item'),
-]
+
+    path('api/products/add/', views.add_product, name='add_product'),
+    path('api/products/', views.get_product_list, name='get_product_list'),
+    path('api/categories/add/', views.add_category, name='add_category'),
+    path('api/categories/', views.get_category_list, name='get_category_list'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

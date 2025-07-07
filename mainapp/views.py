@@ -18,7 +18,8 @@ from django.views.decorators.csrf import \
     csrf_exempt  # For AJAX, consider CSRF tokens properly in production
 
 from .models import OTP  # Import the OTP model
-from .models import Cart, CartItem, Product
+from .models import Cart, CartItem, Product, Category
+from django.db.models import Count
 
 
 # Existing views (keep them as they are)
@@ -79,7 +80,19 @@ def login_user(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return JsonResponse({'success': True, 'message': 'Login successful.'}, status=200)
+
+                    if user.is_superuser:
+                        role = 'admin'
+                    else:
+                        role = 'user'
+
+                    return JsonResponse({
+                        'success': True, 
+                        'message': 'Login successful.',
+                        'role': role,
+                        'username': user.username,
+                    }, 
+                    status=200)
                 else:
                     # If user is not active, try to resend OTP
                     send_otp_to_email(user) # Resend OTP if user tries to login but is not active
@@ -220,7 +233,7 @@ def send_otp_to_email(user):
 def user_logout(request):
     logout(request)
     messages.success(request, "You have been logged out.")
-    return redirect('home') # Redirect to dashboard or login page
+    return redirect('/') 
 
 def get_current_user(request):
     if request.user.is_authenticated:
@@ -313,3 +326,88 @@ def add_to_cart(request):
 def get_cart_count(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
     return JsonResponse({'success': True, 'total_items': cart.get_total_items()})
+
+
+@csrf_exempt  # Only needed if you're not sending CSRF header
+@login_required
+def add_product(request):
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name')
+            category_id = request.POST.get('category')
+            stock = int(request.POST.get('stock', 0))
+            price = float(request.POST.get('price', 0))
+            description = request.POST.get('description', '')
+            image = request.FILES.get('image')
+
+            if not name or not price:
+                return JsonResponse({'success': False, 'message': 'Name and price are required.'}, status=400)
+
+            category = Category.objects.filter(id=category_id).first()
+            if not category:
+                return JsonResponse({'success': False, 'message': 'Category not found.'}, status=400)
+
+            product = Product.objects.create(
+                name=name,
+                category=category,
+                stock=stock,
+                price=price,
+                description=description,
+                image=image
+            )
+
+            return JsonResponse({'success': True, 'message': 'Product added successfully.', 'product_id': product.id}, status=201)
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+def get_product_list(request):
+    products = Product.objects.select_related('category').all()
+
+    data = []
+    for product in products:
+        data.append({
+            'id': product.id,
+            'name': product.name,
+            'category': product.category.name if product.category else 'Uncategorized',
+            'price': float(product.price),
+            'stock': product.stock,
+            'image': product.image.url if product.image else '',
+            'description': product.description,
+        })
+
+    return JsonResponse({'products': data})
+
+
+@csrf_exempt  # Optional if CSRF token is passed from frontend
+@login_required
+def add_category(request):
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name', '').strip()
+
+            if not name:
+                return JsonResponse({'success': False, 'message': 'Category name is required.'}, status=400)
+
+            # Check if it already exists
+            if Category.objects.filter(name__iexact=name).exists():
+                return JsonResponse({'success': False, 'message': 'Category already exists.'}, status=400)
+
+            category = Category.objects.create(name=name)
+
+            return JsonResponse({'success': True, 'message': 'Category added.', 'id': category.id}, status=201)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+def get_category_list(request):
+    categories = (
+        Category.objects
+        .annotate(product_count=Count('product'))
+        .values('id', 'name', 'product_count')
+    )
+    
+    return JsonResponse({'categories': list(categories)}, safe=False)

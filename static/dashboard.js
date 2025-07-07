@@ -3,109 +3,6 @@ console.log("dashboard.js loaded");
 
 // Global variables (mock data for products - still used for frontend display)
 // NOTE: In a real e-commerce app, products would ideally be fetched from backend API
-window.products = [
-  {
-    id: 1,
-    name: "Beras Raja Platinum",
-    price: 12000,
-    description:
-      "Beras kualitas premium 5kg. Beras ini dipilih dari varietas terbaik, diolah dengan teknologi modern untuk menghasilkan bulir beras yang utuh dan bersih. Cocok untuk konsumsi sehari-hari keluarga.",
-    category: "Kebutuhan Pokok",
-    image: "https://c.alfagift.id/product/1/1_A6899450001022_20250206155940934_base.jpg",
-    stock: 50,
-  },
-  {
-    id: 2,
-    name: "Minyak Goreng",
-    price: 15000,
-    description:
-      "Minyak goreng kemasan 1L. Terbuat dari kelapa sawit pilihan, kaya akan Vitamin A dan D. Ideal untuk menggoreng dan menumis, memberikan rasa gurih pada masakan Anda.",
-    category: "Kebutuhan Pokok",
-    image: "https://c.alfagift.id/product/1/1_A09350001879_20211001113946725_base.jpg",
-    stock: 30,
-  },
-  {
-    id: 3,
-    name: "Susu UHT",
-    price: 8000,
-    description:
-      "Susu UHT rasa vanilla 200ml. Susu siap minum dengan rasa vanilla yang lezat, diperkaya vitamin dan mineral. Praktis dibawa ke mana saja untuk sumber energi instan.",
-    category: "Minuman",
-    image: "https://c.alfagift.id/product/1/1_A7671640001094_20230705095812479_base.jpg",
-    stock: 100,
-  },
-  {
-    id: 4,
-    name: "Telur Ayam",
-    price: 28000,
-    description:
-      "Telur ayam negeri 1 lusin. Sumber protein hewani yang murah dan mudah didapat. Cocok untuk berbagai olahan masakan.",
-    category: "Kebutuhan Pokok",
-    image: "https://image.astronauts.cloud/product-images/2024/9/WhatsAppImage20240926at16_0ead3922-2d89-45d9-9ccf-eb1b45fbf003_900x900.jpg",
-    stock: 20,
-  },
-  {
-    id: 5,
-    name: "Kopi Instan",
-    price: 9500,
-    description:
-      "Kopi instan sachet. Praktis untuk dinikmati kapan saja. Rasakan sensasi kopi nikmat di setiap tegukan.",
-    category: "Minuman",
-    image: "https://images.tokopedia.net/img/cache/700/hDjmkQ/2025/1/9/2f90cacd-02e2-4b76-b123-bec878e9fca0.jpg",
-    stock: 75,
-  },
-  {
-    id: 6,
-    name: "Sabun Mandi",
-    price: 7000,
-    description:
-      "Sabun mandi cair dengan aroma. Memberikan keharuman dan kesegaran sepanjang hari. Cocok untuk kulit sensitif.",
-    category: "Perlengkapan Mandi",
-    image: "https://assets.unileversolutions.com/v1/101677433.png",
-    stock: 40,
-  },
-  {
-    id: 7,
-    name: "Pasta Gigi",
-    price: 12000,
-    description:
-      "Pasta gigi dengan formula perlindungan total. Melindungi gigi dari gigi berlubang dan bau mulut. Nafas segar sepanjang hari.",
-    category: "Perlengkapan Mandi",
-    image: "https://allofresh.id/blog/wp-content/uploads/2023/11/merek-pasta-gigi-2.jpg",
-    stock: 60,
-  },
-  {
-    id: 8,
-    name: "Le minerale",
-    price: 5000,
-    description:
-      "Minuman air mineral menyegarkan.",
-    category: "Minuman",
-    image: "https://media.monotaro.id/mid01/big/Perlengkapan%20Dapur%20%26%20Horeka/Minuman/Minuman%20Ringan/Le%20Minerale%20Air%20Mineral%20Botol/Le%20Minerale%20Air%20Mineral%20Botol%201500ml%201carton(12pcs)/9hS029483341-1.jpg",
-    stock: 25,
-  },
-  {
-    id: 9,
-    name: "Fruitea",
-    price: 63000,
-    description:
-      "Minuman teh rasa 200ml kemasan, 1 Kardus isi 24.",
-    category: "Minuman",
-    image: "https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/106/MTA-179476324/fruit_tea_fruit_tea_genggam_200_ml_1_dus_teh_rasa_buah_segar_fruitea_sosro_full04_3265af49.jpg",
-    stock: 35,
-  },
-  {
-    id: 10,
-    name: "Teh Pucuk",
-    price: 8500,
-    description:
-      "Teh Pucuk botolan.",
-    category: "Minuman",
-    image: "https://solvent-production.s3.amazonaws.com/media/images/products/2021/06/DSC_0109_copy_I7mT4F6.jpg",
-    stock: 80,
-  },
-];
-
 // Auth related DOM elements
 const authButtons = document.getElementById("authButtons");
 const accountMenu = document.getElementById("accountMenu");
@@ -450,36 +347,40 @@ async function verifyOtp() {
  * Renders products into the catalog container.
  * @param {Array<object>} filteredProducts - Products to render.
  */
-function renderProducts(filteredProducts) {
+async function renderProducts(products) {
   if (!catalogContainer) return;
 
+  let newProducts = products
+  if(!products) {
+    newProducts = await fetchProducts(); // fetch from DB
+  }
   catalogContainer.innerHTML = "";
-  if (filteredProducts.length === 0) {
+
+  if (newProducts.length === 0) {
     catalogContainer.innerHTML =
       '<p style="text-align: center; color: #6c757d; font-size: 1.1em; padding: 50px;">Tidak ada produk yang ditemukan.</p>';
     return;
   }
 
-  filteredProducts.forEach((product) => {
+  newProducts.forEach((product) => {
     const productCard = document.createElement("div");
     productCard.className = "product-card";
 
     const truncatedDescription =
-      product.description.length > 70
+      product.description?.length > 70
         ? product.description.substring(0, 70) + "..."
         : product.description;
 
     productCard.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" />
-            <h4>${product.name}</h4>
-            <p class="product-price">Rp ${product.price.toLocaleString(
-              "id-ID"
-            )}</p>
-            <p>${truncatedDescription}</p>
-            <button class="btn btn-primary add-to-cart-btn" data-id="${
-              product.id
-            }">+ Keranjang</button>
-        `;
+      <img src="${product.image}" alt="${product.name}" />
+      <h4>${product.name}</h4>
+      <p class="product-price">Rp ${product.price.toLocaleString("id-ID")}</p>
+      <p>${product.category}</p>
+      <button class="btn btn-primary add-to-cart-btn" data-id="${product.id}">
+        + Keranjang
+      </button>
+    `;
+
     catalogContainer.appendChild(productCard);
 
     const elementsToClickForDetail = productCard.querySelectorAll(
@@ -497,7 +398,7 @@ function renderProducts(filteredProducts) {
       });
     }
   });
-  // After rendering, ensure button visibility is correct based on global login state
+
   checkLoginStatus(); // Re-check login status to update button visibility
 }
 
@@ -652,6 +553,7 @@ window.updateCartIconCount = function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   // Ensure all DOM elements are loaded before attaching listeners
+  initProductFiltering()
   btnLoginSubmit = document.getElementById("btnLoginSubmit");
   btnRegisterSubmit = document.getElementById("btnRegisterSubmit");
   btnResetPassword = document.getElementById("btnResetPassword");
@@ -753,6 +655,11 @@ document.addEventListener("DOMContentLoaded", function () {
           if (loginError) loginError.textContent = "";
           window.showToast(data.message, "success");
           if (authModal) authModal.style.display = "none";
+
+          if(data.role && data.role === "admin") {
+            return window.location.href = "/admin-panel/";
+          }
+
           checkLoginStatus(); // Update UI after successful login
         } else {
           if (loginError) loginError.textContent = data.message;
@@ -869,51 +776,76 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --- Dashboard Specific Logic (Product Catalog) ---
-
   // Populate categories in the filter dropdown
-  if (categoryFilter) {
-    const categories = [...new Set(products.map((p) => p.category))];
-    categoryFilter.innerHTML = '<option value="all">Semua Kategori</option>';
-    categories.forEach((category) => {
-      const option = document.createElement("option");
-      option.value = category;
-      option.textContent = category;
-      categoryFilter.appendChild(option);
-    });
-
-    // Filter products when category changes
-    categoryFilter.addEventListener("change", () => filterAndSearchProducts());
-  }
-
-  // Search functionality
-  if (searchInput) {
-    searchInput.addEventListener("input", () => filterAndSearchProducts());
-  }
-
-  // Combined filter and search function
-  function filterAndSearchProducts() {
-    const selectedCategory = categoryFilter ? categoryFilter.value : "all";
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
-
-    let filtered = products;
-
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm) ||
-          product.description.toLowerCase().includes(searchTerm) ||
-          product.category.toLowerCase().includes(searchTerm)
-      );
-    }
-    renderProducts(filtered);
-  }
-
   // Initial product rendering on dashboard load
-  renderProducts(products);
 });
+async function fetchProducts() {
+  try {
+    const res = await fetch('/api/products/');
+    const data = await res.json();
+    return data.products; // return product array
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+    return [];
+  }
+}
+
+async function initProductFiltering() {
+  try {
+    const res = await fetch("/api/products/");
+    const data = await res.json();
+    allProducts = data.products;
+
+    populateCategoryOptions(allProducts);
+    renderProducts(allProducts); // show all initially
+
+    // Add listeners
+    if (categoryFilter) {
+      categoryFilter.addEventListener("change", filterAndSearchProducts);
+    }
+    if (searchInput) {
+      searchInput.addEventListener("input", filterAndSearchProducts);
+    }
+
+  } catch (error) {
+    console.error("Failed to load products:", error);
+  }
+}
+
+// Create <option> for each category
+function populateCategoryOptions(products) {
+  if (!categoryFilter) return;
+
+  const categories = [...new Set(products.map((p) => p.category))];
+  categoryFilter.innerHTML = '<option value="all">Semua Kategori</option>';
+
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+// Combined filter + search logic
+function filterAndSearchProducts() {
+  const selectedCategory = categoryFilter?.value||  "all";
+  const searchTerm = searchInput?.value.toLowerCase()||  "";
+
+  let filtered = [...allProducts];
+
+  if (selectedCategory !== "all") {
+    filtered = filtered.filter((p) => p.category === selectedCategory);
+  }
+
+  if (searchTerm) {
+    filtered = filtered.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchTerm)||
+        p.description.toLowerCase().includes(searchTerm)||
+        p.category.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  renderProducts(filtered);
+}

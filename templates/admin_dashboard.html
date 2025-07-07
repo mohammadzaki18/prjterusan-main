@@ -123,70 +123,15 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>P001</td>
-                            <td>Kopi Robusta 250gr</td>
-                            <td>Minuman</td>
-                            <td>Rp 25.000</td>
-                            <td>150</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>P002</td>
-                            <td>Mie Instan Rasa Ayam Bawang</td>
-                            <td>Makanan</td>
-                            <td>Rp 3.500</td>
-                            <td>300</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>P003</td>
-                            <td>Sabun Mandi Cair 500ml</td>
-                            <td>Perawatan Diri</td>
-                            <td>Rp 18.000</td>
-                            <td>80</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>P004</td>
-                            <td>Susu UHT Full Cream 1L</td>
-                            <td>Minuman</td>
-                            <td>Rp 17.500</td>
-                            <td>120</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>P005</td>
-                            <td>Pasta Gigi Anti Karies</td>
-                            <td>Perawatan Diri</td>
-                            <td>Rp 12.000</td>
-                            <td>90</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        </tbody>
+                    <tbody id="productTableBody">
+                    </tbody>
                 </table>
             </div>
-            <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-product-form"><i class="fas fa-plus"></i> Tambahkan Produk Baru</button>
+            <!-- <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-product-form"><i class="fas fa-plus"></i> Tambahkan Produk Baru</button> -->
 
-            <div id="add-product-form" class="content-section" style="display:none;">
+            <div id="add-product-form-div" class="content-section" style="display:none;">
                 <h2>Form Produk Baru</h2>
-                <form class="add-product-form">
+                <form id="add-product-form" class="add-product-form">
                     <div class="form-group">
                         <label for="productName">Nama Produk:</label>
                         <input type="text" id="productName" required />
@@ -195,10 +140,6 @@
                         <label for="productCategory">Kategori:</label>
                         <select id="productCategory" required>
                             <option value="">Pilih Kategori</option>
-                            <option value="Makanan">Makanan</option>
-                            <option value="Minuman">Minuman</option>
-                            <option value="Perawatan Diri">Perawatan Diri</option>
-                            <option value="Rumah Tangga">Rumah Tangga</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -212,6 +153,10 @@
                     <div class="form-group">
                         <label for="productDescription">Deskripsi:</label>
                         <textarea id="productDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Gambar Produk (opsional):</label>
+                        <input type="file" id="productImage" accept="image/*" />
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Produk</button>
                     <button type="button" class="btn btn-outline-secondary cancel-form-btn" data-target-section="products"><i class="fas fa-times"></i> Batal</button>
@@ -231,51 +176,15 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>C001</td>
-                            <td>Makanan</td>
-                            <td>50</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>C002</td>
-                            <td>Minuman</td>
-                            <td>40</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>C003</td>
-                            <td>Perawatan Diri</td>
-                            <td>30</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>C004</td>
-                            <td>Rumah Tangga</td>
-                            <td>25</td>
-                            <td>
-                                <button class="btn btn-sm btn-info" data-action="edit"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="btn btn-sm btn-danger" data-action="delete"><i class="fas fa-trash-alt"></i> Hapus</button>
-                            </td>
-                        </tr>
+                    <tbody id="categoryTableBody">
                     </tbody>
                 </table>
             </div>
-            <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-category-form"><i class="fas fa-plus"></i> Tambahkan Kategori Baru</button>
+            <!-- <button class="btn btn-success mt-3 add-new-btn" data-target-form="add-category-form"><i class="fas fa-plus"></i> Tambahkan Kategori Baru</button> -->
 
-             <div id="add-category-form" class="content-section" style="display:none;">
+            <div id="add-category-form-div" class="content-section" style="display:none;">
                 <h2>Form Kategori Baru</h2>
-                <form class="add-category-form">
+                <form id="add-category-form" class="add-category-form">
                     <div class="form-group">
                         <label for="categoryName">Nama Kategori:</label>
                         <input type="text" id="categoryName" required />

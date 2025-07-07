@@ -1,10 +1,106 @@
 // admin.js
+console.log("Admin Dashboard JS Loadedd");
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    loadCategoryTable();
+    loadProductTable();
+
     const navLinks = document.querySelectorAll('.nav-link');
     const contentSections = document.querySelectorAll('.content-section');
     const currentSectionTitle = document.getElementById('currentSectionTitle');
     const headerActionsContainer = document.querySelector('.admin-header .header-actions');
+
+    // Add products submit
+    const addProductForm = document.getElementById('add-product-form');
+    if (addProductForm) {
+        addProductForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('productName').value);
+            formData.append('category', document.getElementById('productCategory').value); // ID of category
+            formData.append('stock', document.getElementById('productStock').value);
+            formData.append('price', document.getElementById('productPrice').value);
+            formData.append('description', document.getElementById('productDescription').value);
+            
+            const imageFile = document.getElementById('productImage').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            try {
+                const res = await fetch('/api/products/add/', {
+                    method: 'POST',
+                    headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    credentials: 'include',
+                    body: formData,
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alert('Produk berhasil ditambahkan!');
+                    addProductForm.reset();
+                    showSection('products'); // optional: switch UI to product list
+                    loadProductTable(); // reload product table to show new product
+                } else {
+                    alert(data.message || 'Gagal menambahkan produk.');
+                }
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert('Terjadi kesalahan saat menambahkan produk.');
+            }
+        });
+    }
+
+    // Add categories submit
+    const addCategoryForm = document.getElementById('add-category-form');
+    if (addCategoryForm) {
+        addCategoryForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const categoryName = document.getElementById('categoryName').value.trim();
+            if (!categoryName) {
+                alert('Nama kategori tidak boleh kosong.');
+            return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', categoryName);
+
+            try {
+            const res = await fetch('/api/categories/add/', {
+                method: 'POST',
+                headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                },
+                credentials: 'include',
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                alert('Kategori berhasil ditambahkan!');
+                addCategoryForm.reset();
+
+                // Optionally reload category dropdown
+                if (typeof loadCategories === 'function') {
+                    loadCategories();
+                }
+                loadCategoryTable(); // Reload category table to show new category
+            } else {
+                alert(data.message || 'Gagal menambahkan kategori.');
+            }
+            } catch (error) {
+            console.error('Error adding category:', error);
+            alert('Terjadi kesalahan saat menambahkan kategori.');
+            }
+        });
+    }
 
     // Function to show the active section and update active link
     function showSection(sectionId) {
@@ -112,12 +208,12 @@ document.addEventListener('DOMContentLoaded', function() {
         headerActionsContainer.innerHTML = ''; // Clear previous buttons
         if (sectionId === 'products') {
             headerActionsContainer.innerHTML = `
-                <button class="btn btn-success add-new-btn" data-target-form="add-product-form"><i class="fas fa-plus"></i> Tambah Produk</button>
+                <button class="btn btn-success add-new-btn" data-target-form="add-product-form-div"><i class="fas fa-plus"></i> Tambah Produk</button>
                 <button class="btn btn-outline-secondary"><i class="fas fa-filter"></i> Filter</button>
             `;
         } else if (sectionId === 'categories') {
             headerActionsContainer.innerHTML = `
-                <button class="btn btn-success add-new-btn" data-target-form="add-category-form"><i class="fas fa-plus"></i> Tambah Kategori</button>
+                <button class="btn btn-success add-new-btn" data-target-form="add-category-form-div"><i class="fas fa-plus"></i> Tambah Kategori</button>
             `;
         } else if (sectionId === 'orders') {
             headerActionsContainer.innerHTML = `
@@ -195,21 +291,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Dummy alerts for form submissions
-    document.querySelectorAll('.add-product-form, .add-category-form, .add-user-form').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent actual form submission
-            alert(`Data ${this.querySelector('h2').textContent.replace('Form', '').trim()} berhasil disimpan! (Ini hanya demo frontend)`);
-            const targetSectionId = this.classList.contains('add-product-form') ? 'products' :
-                                    this.classList.contains('add-category-form') ? 'categories' :
-                                    'users';
-            // Optionally, reset form fields
-            this.reset();
-            // Go back to the list view
-            this.classList.remove('active');
-            this.style.display = 'none';
-            showSection(targetSectionId);
-        });
-    });
+    // document.querySelectorAll('.add-product-form, .add-category-form, .add-user-form').forEach(form => {
+    //     form.addEventListener('submit', function(event) {
+    //         event.preventDefault(); // Prevent actual form submission
+    //         alert(`Data ${this.querySelector('h2').textContent.replace('Form', '').trim()} berhasil disimpan! (Ini hanya demo frontend)`);
+    //         const targetSectionId = this.classList.contains('add-product-form') ? 'products' :
+    //                                 this.classList.contains('add-category-form') ? 'categories' :
+    //                                 'users';
+    //         // Optionally, reset form fields
+    //         this.reset();
+    //         // Go back to the list view
+    //         this.classList.remove('active');
+    //         this.style.display = 'none';
+    //         showSection(targetSectionId);
+    //     });
+    // });
 
     // Dummy alerts for table action buttons (Edit, Delete, Detail, Proses, Kirim, Setujui, Tolak, Print Invoice)
     document.addEventListener('click', function(event) {
@@ -231,3 +327,103 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the dashboard view on load
     showSection('dashboard');
 });
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+async function loadProductTable() {
+  try {
+    const res = await fetch('/api/products/');
+    const data = await res.json();
+    const tbody = document.getElementById('productTableBody');
+
+    if (tbody) {
+      tbody.innerHTML = ''; // Clear table
+
+      data.products.forEach(product => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>P${String(product.id).padStart(3, '0')}</td>
+          <td>${product.name}</td>
+          <td>${product.category}</td>
+          <td>Rp ${parseInt(product.price).toLocaleString()}</td>
+          <td>${product.stock}</td>
+          <td>
+            <button class="btn btn-sm btn-info" data-action="edit" data-id="${product.id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-danger" data-action="delete" data-id="${product.id}">
+              <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+  } catch (error) {
+    console.error('Failed to load products:', error);
+  }
+}
+
+async function loadCategoryTable() {
+  try {
+    const res = await fetch('/api/categories/');
+    const data = await res.json();
+
+    // ✅ 1. Update category table
+    const tbody = document.getElementById('categoryTableBody');
+    if (tbody) {
+      tbody.innerHTML = ''; // Clear existing rows
+
+      data.categories.forEach((category) => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>C${String(category.id).padStart(3, '0')}</td>
+          <td>${category.name}</td>
+          <td>${category.product_count || 0}</td>
+          <td>
+            <button class="btn btn-sm btn-info" data-action="edit" data-id="${category.id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-danger" data-action="delete" data-id="${category.id}">
+              <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ✅ 2. Update category dropdown (e.g., for adding products)
+    const categorySelect = document.getElementById('productCategory');
+    if (categorySelect) {
+      categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+      data.categories.forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+      });
+    }
+
+  } catch (err) {
+    console.error('Failed to load categories:', err);
+  }
+}
