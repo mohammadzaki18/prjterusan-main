@@ -409,11 +409,15 @@ function renderCartItems(items) {
 }
 
 function updateSummary(total) {
-  const shipping = 0;
-  const subtotal = total;
-  const totalWithShipping = subtotal + shipping;
+    const shipping = SHIPPING_COST;
+    const subtotal = total;
+    const totalWithShipping = subtotal + shipping;
 
-  document.getElementById("cartSubtotal").innerText = `Rp ${subtotal}`;
-  document.getElementById("cartShipping").innerText = `Rp ${shipping}`;
-  document.getElementById("cartTotal").innerText = `Rp ${totalWithShipping}`;
+    document.getElementById("cartSubtotal").innerText = `Rp ${formatRupiah(subtotal)}`;
+    document.getElementById("cartShipping").innerText = `Rp ${formatRupiah(shipping)}`;
+    document.getElementById("cartTotal").innerText = `Rp ${formatRupiah(totalWithShipping)}`;
+}
+
+function formatRupiah(number) {
+  return new Intl.NumberFormat("id-ID").format(number);
 }

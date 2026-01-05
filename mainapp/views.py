@@ -19,6 +19,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import CartItem
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Order
 
 # Existing views (keep them as they are)
 def dashboard(request):
@@ -334,14 +338,14 @@ def api_cart_items(request):
         total += item_total
         items_data.append({
             "product_name": item.product.name,
-            "price": item.product.price,
+            "price": int(item.product.price),
             "quantity": item.quantity,
-            "total_price": item_total,
+            "total_price": int(item_total),
         })
 
     return JsonResponse({
         "items": items_data,
-        "total": total
+        "total": int(total)
     })
 
 @csrf_exempt  # atau gunakan @ensure_csrf_cookie di template
@@ -389,22 +393,58 @@ def api_checkout(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 @login_required
-def api_cart_items(request):
-    cart_items = CartItem.objects.filter(cart__user=request.user)
-    items = []
-    total = 0
+def api_order_latest(request):
+    order = (
+        Order.objects
+        .filter(user=request.user)
+        .order_by('-created_at')
+        .first()
+    )
 
-    for item in cart_items:
-        total_price = item.get_total_price()
-        items.append({
-            "product_name": item.product.name,
-            "price": item.product.price,
-            "quantity": item.quantity,
-            "total_price": total_price,
-        })
-        total += total_price
+    if not order:
+        return JsonResponse({"error": "Order tidak ditemukan"}, status=404)
 
     return JsonResponse({
-        "items": items,
-        "total": total
+        "order_number": f"TRSMK-{order.id}",
+        "address": order.address,
+        "city": order.city,
+        "postal_code": order.postal_code,
+        "payment_method": order.payment_method,
+        "subtotal": int(order.total),  # jika belum pisah ongkir
+        "shipping": 10000,              # atau dari field order
+        "total": int(order.total + 10000),
+        "created_at": order.created_at.strftime("%d %B %Y"),
+        "status": "PAID"
+    })
+
+@login_required
+def api_order_history(request):
+    page = int(request.GET.get("page", 1))
+    page_size = int(request.GET.get("page_size", 5))
+
+    orders_qs = Order.objects.filter(user=request.user).order_by("-id")
+
+    paginator = Paginator(orders_qs, page_size)  # ← FIX DI SINI
+    page_obj = paginator.get_page(page)
+
+    orders_data = []
+    for order in page_obj:
+        orders_data.append({
+            "id": order.id,
+            "order_number": f"TRSMK-{order.id}",
+            "address": order.address,
+            "city": order.city,
+            "payment_method": order.payment_method,
+            "status": getattr(order, "status", "Diproses"),
+            "total": int(order.total),
+            "created_at": (
+                order.created_at.strftime("%d %b %Y")
+                if hasattr(order, "created_at") and order.created_at
+                else "-"
+            ),
+        })
+
+    return JsonResponse({
+        "orders": orders_data,
+        "has_more": page_obj.has_next()
     })

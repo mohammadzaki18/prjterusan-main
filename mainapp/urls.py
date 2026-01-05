@@ -32,4 +32,6 @@ urlpatterns = [
     path("api/cart-clear/", views.api_clear_cart, name="api_clear_cart"),
     path("api/checkout/", views.api_checkout, name="api_checkout"),
     path("api/cart-items/", views.api_cart_items, name="api_cart_items"),
+    path("api/order/latest/", views.api_order_latest, name="api_order_latest"),
+    path("api/order/history/", views.api_order_history, name="api_order_history"),
 ]

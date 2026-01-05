@@ -35,7 +35,7 @@ function renderCheckoutItems(items) {
 }
 
 function updateCheckoutSummary(total) {
-  const shipping = 0; // tambahkan logika jika perlu
+  const shipping = 15000; // tambahkan logika jika perlu
   const totalWithShipping = total + shipping;
 
   document.getElementById("checkoutSubtotal").innerText = `Rp ${total}`;

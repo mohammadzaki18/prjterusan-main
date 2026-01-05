@@ -380,7 +380,7 @@ async function showProductDetail(productId) {
   modalProductStock.textContent = `${product.stock ?? 'N/A'} item tersedia`;
 
   modalAddToCartBtn.dataset.productId = product.id;
-  modalAddToCartBtn.onclick = () => addToCart(product.id);
+//   modalAddToCartBtn.onclick = () => addToCart(product.id);
 
   const currentUser = await getCurrentUser();
   modalAddToCartBtn.style.display = currentUser ? 'block' : 'none';
@@ -715,6 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {number} productId - The ID of the product to add.
  */
 function addToCart(productId) {
+    console.log('add: ', productId)
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
